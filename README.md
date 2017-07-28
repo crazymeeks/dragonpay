@@ -1,5 +1,5 @@
 <h1 align="center">
-	RESTool
+	Dragonpay Payment Gateway Library
 	<br>
 	<a href="https://github.com/crazymeeks/dragonpay/releases"><img src="https://img.shields.io/github/release/crazymeeks/dragonpay.svg?maxAge=2592000&colorB=de0404" alt="Release"></a>
 	<a href="https://packagist.org/packages/crazymeeks/dragonpay"><img src="https://img.shields.io/packagist/v/crazymeeks/dragonpay.svg?maxAge=2592000" alt="Packgist Latest Version"></a>
