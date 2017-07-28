@@ -1,4 +1,4 @@
-# dragonpay
+# Dragonpay Payment Gateway Library
 The Dragonpay payment gateway library in PHP
 
 See the [WIKI](https://github.com/crazymeeks/dragonpay/wiki) for documentation
