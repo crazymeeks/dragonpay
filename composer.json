@@ -1,0 +1,19 @@
+{
+    "name": "crazymeeks/dragonpay",
+    "description": "A PHP library for Dragonpay payment gateway",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "jclaud",
+            "email": "jeffclaud17@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Crazymeeks\\": "src"
+        }
+    }
+}
