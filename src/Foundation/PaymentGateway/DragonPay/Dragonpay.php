@@ -17,17 +17,34 @@ class Dragonpay implements PaymentGatewayInterface
 {
 
 	const REQUEST_PARAM_MERCHANT_ID = 'merchantid';
-	const REQUEST_PARAM_TXNID = 'txnid';
-	const REQUEST_PARAM_AMOUNT = 'amount';
-	const REQUEST_PARAM_CCY = 'ccy';
+	const REQUEST_PARAM_TXNID       = 'txnid';
+	const REQUEST_PARAM_AMOUNT      = 'amount';
+	const REQUEST_PARAM_CCY         = 'ccy';
 	const REQUEST_PARAM_DESCRIPTION = 'description';
-	const REQUEST_PARAM_EMAIL = 'email';
-	const REQUEST_PARAM_DIGEST = 'digest';
-	const REQUEST_PARAM_PARAM1 = 'param1';
-	const REQUEST_PARAM_PARAM2 = 'param2';
+	const REQUEST_PARAM_EMAIL       = 'email';
+	const REQUEST_PARAM_DIGEST      = 'digest';
+	const REQUEST_PARAM_PARAM1      = 'param1';
+	const REQUEST_PARAM_PARAM2      = 'param2';
 
 	// we are unsetting this key later for security
 	const REQUEST_PARAM_SECRET_KEY = 'key';
+
+
+	/**
+	 * Dragonpay credit card required params
+	 */
+	const BILLINGINFO_MERCHANT_ID    = 'merchantId';
+	const BILLINGINFO_MERCHANT_TXNID = 'merchantTxnId';
+	const BILLINGINFO_FIRSTNAME      = 'firstName';
+	const BILLINGINFO_LASTNAME       = 'lastName';
+	const BILLINGINFO_ADDRESS1       = 'address1';
+	const BILLINGINFO_ADDRESS2       = 'address2';
+	const BILLINGINFO_CITY           = 'city';
+	const BILLINGINFO_STATE          = 'state';
+	const BILLINGINFO_COUNTRY        = 'country';
+	const BILLINGINFO_ZIPCODE        = 'zipCode';
+	const BILLINGINFO_TELNO          = 'telNo';
+	const BILLINGINFO_EMAIL          = 'email';
 
 
 	/**
@@ -44,6 +61,17 @@ class Dragonpay implements PaymentGatewayInterface
 	 */
 	const PRODUCTION_URL = 'https://gw.dragonpay.ph/Pay.aspx?';
 
+	/**
+	 * Dragon pay send billing info url. As of the development of this
+	 * library, unfortunately dragonpay has no sandbox url for the
+	 * SendBillingInfo() or credit card
+	 *
+	 * If you wish to change the url of SendBillingInfo(), you can call
+	 * the setBillingInfoUrl($full_url) method
+	 *
+	 */
+	protected $sendbillinginfo_url = 'https://gw.dragonpay.ph/DragonPayWebService/MerchantService.asmx';
+
 	static $required_request_parameters = array(
 		self::REQUEST_PARAM_MERCHANT_ID,
 		self::REQUEST_PARAM_TXNID,
@@ -52,6 +80,24 @@ class Dragonpay implements PaymentGatewayInterface
 		self::REQUEST_PARAM_DESCRIPTION,
 		self::REQUEST_PARAM_EMAIL,		
 		self::REQUEST_PARAM_SECRET_KEY,
+	);
+
+	/**
+	 * Dragonpay credit card required params
+	 */
+	static $required_sendbillinginfo_parameters = array(
+		self::BILLINGINFO_MERCHANT_ID,
+		self::BILLINGINFO_MERCHANT_TXNID,
+		self::BILLINGINFO_FIRSTNAME,
+		self::BILLINGINFO_LASTNAME,
+		self::BILLINGINFO_ADDRESS1,
+		self::BILLINGINFO_ADDRESS2,
+		self::BILLINGINFO_CITY,
+		self::BILLINGINFO_STATE,
+		self::BILLINGINFO_COUNTRY,
+		self::BILLINGINFO_ZIPCODE,
+		self::BILLINGINFO_TELNO,
+		self::BILLINGINFO_EMAIL,
 	);
 
 	static $optional_request_parameters = array(
@@ -106,6 +152,14 @@ class Dragonpay implements PaymentGatewayInterface
 	protected $secret_key;
 
 	/**
+	 * Dragonpay's payment channel. e.g if $payment_channel = 64 user will pay using credit card
+	 *
+	 * @see Dragonpay's documentation for Payment Channels
+	 * @link https://www.dragonpay.ph/wp-content/uploads/2014/05/Dragonpay-PS-API
+	 */
+	protected $payment_channel = null;
+
+	/**
 	 * Constructor
 	 *
 	 * @param array $request_params        Dragonpay Request parameters($_POST)
@@ -157,13 +211,126 @@ class Dragonpay implements PaymentGatewayInterface
 	}
 
 	/**
+	 * Send Billing info. If you wish to pay using credit card,
+	 * Dragonpay requires fraud checking checking by sending
+	 * customer's billing address
+	 *
+	 * @param array $parameters     The array of parameters
+	 * @see Dragonpay's docs of SendBillingInfo usage
+	 * @link https://www.dragonpay.ph/wp-content/uploads/2014/05/Dragonpay-PS-API
+	 *
+	 * @return bool    true if success, otherwise false
+	 *
+	 * @api
+	 */
+	public function sendBillingInfo(array $parameters)
+	{
+	
+		foreach($parameters as $key => $param){
+			$i = (string) $key;
+			if(!in_array($i, self::$required_sendbillinginfo_parameters)){
+				throw new \LogicException('Invalid Dragonpay SendBillingInfo() Parameters. Please check your parameters');
+			}
+			// make sure we have no empty values
+			if(empty($param) || $param == ''){
+				throw new \LogicException('SendBillingInfo() should not have an empty value. Please check your parameters');
+			}
+		}
+		// Set payment channel to 64(credit card)
+		$this->setPaymentChannel(64);
+
+
+		$wsdl = new SoapClient($url . '?wsdl',  array(
+		   'location' => $url,
+		   'trace' => 1,
+		));
+
+		$result = $wsdl->SendBillingInfo($parameters)->SendBillingInfoResult;
+
+		return $result == 0 ? true : false;
+	}
+
+	/**
+	 * Setter: SendBillingInfo. This is for fraud checking if you wish
+	 * user to pay via credit card
+	 *
+	 * @param string $api_url           The full url of Dragonpay's api_url. This is not the same as sandbox/production url
+	 *
+	 * @return bool
+	 *
+	 * @throws \LogicException
+	 */
+	public function setBillingInfoUrl($api_url)
+	{
+		$this->sendbillinginfo_url = $api_url;
+	}
+
+	/**
+	 * Getter: SendBillingInfoUrl
+	 *
+	 * @return string
+	 */
+	public function getBillingInfoUrl()
+	{
+		return $this->sendbillinginfo_url;
+	}
+
+	/**
+	 * Setter: Payment Channel. e.g Online banking, OTC, Paypal, Credit Card
+	 *
+	 * @param int $channel
+	 * @see Dragonpay's payment channel
+	 * @link https://www.dragonpay.ph/wp-content/uploads/2014/05/Dragonpay-PS-API
+	 *
+	 * @return void
+	 * @throws \LogicException
+	 *
+	 * @api
+	 */
+	public function setPaymentChannel($channel)
+	{
+		if(!is_numeric($channel)){
+			throw new \LogicException('Invalid parameter. integer expected but ' . gettype($channel) . ' given');
+		}
+		$this->payment_channel = $channel;
+	}
+
+	/**
+	 * Getter: Payment Channel
+	 *
+	 * @return mixed
+	 */
+	public function getPaymentChannel()
+	{
+		return $this->payment_channel;
+	}
+
+	/**
+	 * Setter: Payment Channel. e.g Online banking, OTC, Paypal, Credit Card
+	 *
+	 * @param int $channel
+	 * @see Dragonpay's payment channel
+	 * @link https://www.dragonpay.ph/wp-content/uploads/2014/05/Dragonpay-PS-API
+	 *
+	 * @return void
+	 * @throws \LogicException
+	 *
+	 * @api
+	 */
+	public function filterPaymentChannel($channel)
+	{
+		$this->setPaymentChannel($channel);
+	}	
+
+	/**
 	 * Setter: DragonPay required digest parameter
 	 *
 	 * @param array $request_params              Dragonpay request param. Please @see https://www.dragonpay.ph/wp-content/uploads/2014/05/Dragonpay-PS-API
 	 *
 	 * @return array
 	 */
-	public function setDigest(&$request_params){
+	public function setDigest(&$request_params)
+	{
 		$request_params['description'] = urlencode($request_params['description']);
 		$request_params['amount'] = number_format($request_params['amount'], 2, '.', '');
 
@@ -225,6 +392,11 @@ class Dragonpay implements PaymentGatewayInterface
 		$digest_type = $this->getDigestType();
 		$digest = new Digest($digest_type, $this->requestbag->getRequestParams()['digest']);
 		$query_params = array_merge($this->requestbag->getRequestParams(), ['digest' => (string) $digest]);
+
+		// check if Payment Channel filtering is enabled
+		if(!is_null($this->getPaymentChannel())){
+			$query_params = array_merge($query_params, ['mode' => (int) $this->getPaymentChannel()]);
+		}
 
 		return http_build_query($query_params, '', '&');
 	}
