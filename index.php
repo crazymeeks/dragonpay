@@ -44,18 +44,18 @@ $parameters = array(
 $dragonpay = new Dragonpay($parameters);
 
 $sendbillinginfo_params = array(
-		 'merchantId' => 'IMMAP',
-		 'merchantTxnId' => $transaction_number,
-		 'firstName' => $request['first_name'],
-		 'lastName' => $request['last_name'],
-		 'address1' => '',
-		 'address2' => '',
-		 'city' => '',
-		 'state' => '',
-		 'country' => '',
-		 'zipCode' => '',
-		 'telNo' => $request["mobile_number"],
-		 'email' => $request["email"],
+		 'merchantId' => 'MERCHANTID',
+		 'merchantTxnId' => 'Transaction_number',
+		 'firstName' => 'firstname',
+		 'lastName' => 'lastname',
+		 'address1' => 'address1',
+		 'address2' => 'address2'
+		 'city' => 'your_city',
+		 'state' => 'your_state',
+		 'country' => 'your_country',
+		 'zipCode' => 'your_zipcode',
+		 'telNo' => 'your_telno',
+		 'email' => 'your_valid_email',
 		);
 // check if validation pass with SendBillingInfo()
 if($dragonpay->sendBillingInfo($sendbillinginfo_params)){
