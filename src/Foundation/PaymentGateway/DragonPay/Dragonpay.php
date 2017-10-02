@@ -10,6 +10,7 @@
 
 namespace Crazymeeks\Foundation\PaymentGateway\Dragonpay;
 
+use SoapClient;
 use Crazymeeks\Foundation\PaymentGateway\Digest;
 use Crazymeeks\Foundation\PaymentGateway\RequestBag;
 use Crazymeeks\Contracts\Foundation\PaymentGateway\PaymentGatewayInterface;
@@ -239,7 +240,8 @@ class Dragonpay implements PaymentGatewayInterface
 		// Set payment channel to 64(credit card)
 		$this->setPaymentChannel(64);
 
-
+		$url = $this->getBillingInfoUrl();
+		
 		$wsdl = new SoapClient($url . '?wsdl',  array(
 		   'location' => $url,
 		   'trace' => 1,
