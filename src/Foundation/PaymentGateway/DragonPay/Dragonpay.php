@@ -166,10 +166,14 @@ class Dragonpay implements PaymentGatewayInterface
 	 * @param array $request_params        Dragonpay Request parameters($_POST)
 	 * @param string $url                  The Dragonpay payment url
 	 * @param bool $mode                   true = sandbox, false = production
+	 * @param  string $payment_channel     The payment channel
 	 * 
 	 */
-	public function __construct(array $request_params = array(), $url = null, $mode = true)
+	public function __construct(array $request_params = array(), $url = null, $mode = true, $payment_channel = null)
 	{
+		
+		$this->filterPaymentChannel($payment_channel);
+
 		$this->init($request_params, $url, $mode);
 	}
 
@@ -289,11 +293,15 @@ class Dragonpay implements PaymentGatewayInterface
 	 *
 	 * @api
 	 */
-	public function setPaymentChannel($channel)
+	public function setPaymentChannel($channel = null)
 	{
+		
+		if (is_null($channel)) return;
+
 		if(!is_numeric($channel)){
 			throw new \LogicException('Invalid parameter. integer expected but ' . gettype($channel) . ' given');
 		}
+
 		$this->payment_channel = $channel;
 	}
 
@@ -363,7 +371,7 @@ class Dragonpay implements PaymentGatewayInterface
 	 */
 	public function setRequestParameters(array $params, $url = null, $mode = true)
 	{	
-		return new static($params);
+		return new static($params, $url, $mode, $this->getPaymentChannel());
 	}
 
 	protected function sanitizeParameters(&$request_params)
