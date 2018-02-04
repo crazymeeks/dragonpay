@@ -73,6 +73,21 @@ class Dragonpay implements PaymentGatewayInterface
 	 */
 	protected $sendbillinginfo_url = 'https://gw.dragonpay.ph/DragonPayWebService/MerchantService.asmx';
 
+	/**
+	 * Dragon pay sandbox web service url
+	 *
+	 * For greater security, developer can implement the API using the XML Web
+	 * Services Model. Under this model, the parameters are not passed
+	 * through browser redirects which are visile to end-users. Instead,
+	 * parameters are exchanged directly between the Merchant site and
+	 * PS servers through SOAP calls.
+	 * 
+	 * @var string
+	 */
+	protected $sandboxWebServiceUrl = 'http://test.dragonpay.ph/DragonPayWebService/MerchantService.asmx';
+
+	protected $productionWebServiceUrl = 'https://secure.dragonpay.ph/DragonPayWebService/MerchantService.asmx';
+
 	static $required_request_parameters = array(
 		self::REQUEST_PARAM_MERCHANT_ID,
 		self::REQUEST_PARAM_TXNID,
@@ -159,6 +174,14 @@ class Dragonpay implements PaymentGatewayInterface
 	 * @link https://www.dragonpay.ph/wp-content/uploads/2014/05/Dragonpay-PS-API
 	 */
 	protected $payment_channel = null;
+
+	/**
+	 * The request token we pass after redirected
+	 * to dragonpay PS
+	 * 
+	 * @var string
+	 */
+	protected $token = null;
 
 	/**
 	 * Constructor
@@ -254,6 +277,38 @@ class Dragonpay implements PaymentGatewayInterface
 		$result = $wsdl->SendBillingInfo($parameters)->SendBillingInfoResult;
 
 		return $result == 0 ? true : false;
+	}
+
+
+	/**
+	 * Request token through SOAP. This method will return
+	 * a tokenid string which will be used to refer to
+	 * this transaction in future Web Method calls. Note
+	 * that validity of this tokenid is limited only to
+	 * 1 hour.
+	 *
+	 * If the value of tokenid is 3-characters or less,
+	 * it must be an error code. 
+	 * @param  array  $parameters This is dragonpay's defined parameters
+	 * 
+	 * @return Token
+	 */
+	public function requestToken(array $parameters)
+	{
+		$webservice_url = $this->getWebserviceUrl();
+		
+		$wsdl = new SoapClient($webservice_url . '?wsdl', array(
+			'location' => $webservice_url,
+			'trace'    => 1,
+		));
+
+		$token = $wsdl->GetTxnToken($parameters);
+
+		if (strlen($token->GetTxnTokenResult) <= 3) {
+
+			return false;
+		}
+		return new Token($token->GetTxnTokenResult);
 	}
 
 	/**
@@ -395,17 +450,28 @@ class Dragonpay implements PaymentGatewayInterface
 	 * Getter: DragonPay required Request Parameters
 	 *
 	 * @return string      http_build_query format
+	 *
+	 * @todo  Refactor this
 	 */
 	public function getRequestParameters()
 	{	
 
-		$digest_type = $this->getDigestType();
-		$digest = new Digest($digest_type, $this->requestbag->getRequestParams()['digest']);
-		$query_params = array_merge($this->requestbag->getRequestParams(), ['digest' => (string) $digest]);
+		if (! $this->token instanceof Token) {
 
-		// check if Payment Channel filtering is enabled
-		if(!is_null($this->getPaymentChannel())){
-			$query_params = array_merge($query_params, ['mode' => (int) $this->getPaymentChannel()]);
+			$digest_type = $this->getDigestType();
+			$digest = new Digest($digest_type, $this->requestbag->getRequestParams()['digest']);
+			$query_params = array_merge($this->requestbag->getRequestParams(), ['digest' => (string) $digest]);
+
+			// check if Payment Channel filtering is enabled
+			if(!is_null($this->getPaymentChannel())){
+				$query_params = array_merge($query_params, ['mode' => (int) $this->getPaymentChannel()]);
+			}
+
+		}else{
+			$query_params = ['tokenid' => $this->token->getToken()];
+			if(!is_null($this->getPaymentChannel())){
+				$query_params = array_merge($query_params, ['mode' => (int) $this->getPaymentChannel()]);
+			}
 		}
 
 		return http_build_query($query_params, '', '&');
@@ -457,7 +523,7 @@ class Dragonpay implements PaymentGatewayInterface
 	 */
 	public function setPaymentMode($mode)
 	{
-		$this->is_sandbox = $mode === 'production' ? false : true;
+		$this->is_sandbox = ($mode === 'production' ? false : true);
 	}
 
 	/**
@@ -515,11 +581,82 @@ class Dragonpay implements PaymentGatewayInterface
 	}
 
 	/**
+	 * Set production's web service url
+	 *
+	 * @see  Web Service models in dragonpay documentation
+	 * 
+	 * @param string $web_service_url
+	 */
+	public function setProductionWebServiceUrl($web_service_url)
+	{
+		$this->productionWebServiceUrl = $web_service_url;
+	}
+
+	/**
+	 * Get production web service url
+	 * 
+	 * @return string
+	 */
+	public function getProductionWebServiceUrl()
+	{
+		return $this->productionWebServiceUrl;
+	}
+
+	/**
+	 * Set sandbox's web service url
+	 *
+	 * @see  Web Service models in dragonpay documentation
+	 * 
+	 * @param string $web_service_url
+	 */
+	public function setSandboxWebServiceUrl($web_service_url)
+	{
+		$this->sandboxWebServiceUrl = $web_service_url;
+	}
+
+	/**
+	 * Get sandbox web service url
+	 * 
+	 * @return string
+	 */
+	public function getSandboxWebServiceUrl()
+	{
+		return $this->sandboxWebServiceUrl;
+	}
+
+	/**
+	 * Get WebService url
+	 * 
+	 * @return string
+	 */
+	public function getWebserviceUrl()
+	{
+		return $this->getPaymentMode() 
+				? $this->getSandboxWebServiceUrl()
+				: $this->getProductionWebServiceUrl();
+	}
+
+	/**
+	 * Use the token as request parameter for dragonpay
+	 * 
+	 * @param  Token         $token
+	 * 
+	 * @return $this
+	 */
+	public function useToken(Token $token)
+	{
+		$this->token = $token;
+
+		return $this;
+	}
+
+	/**
 	 * Redirect to DragonPay gateway
+	 *
+	 * @todo  Due to recent changes, need to refactor this
 	 */
 	public function away()
 	{
-		
 		header("Location: " . $this->getGateWayUrl() . $this->getRequestParameters(), 302);exit();
 	}
 
