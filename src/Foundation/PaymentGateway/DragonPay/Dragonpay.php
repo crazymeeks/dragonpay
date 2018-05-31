@@ -577,7 +577,7 @@ class Dragonpay implements PaymentGatewayInterface
 	 */
 	public function getGateWayUrl()
 	{
-		return $this->gateway_url = $this->is_sandbox ? self::SANDBOX_URL : PRODUCTION_URL;
+		return $this->gateway_url = $this->is_sandbox ? self::SANDBOX_URL : self::PRODUCTION_URL;
 	}
 
 	/**
