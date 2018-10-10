@@ -10,10 +10,10 @@
 
 namespace Crazymeeks\Foundation\PaymentGateway;
 
+use Crazymeeks\Foundation\PaymentGateway\Parameters;
 
 class RequestBag
 {
-	
 
 	static $requestParameters = array();
 
@@ -37,5 +37,15 @@ class RequestBag
 	 */
 	public function getRequestParams(){
 		return self::$requestParameters;
+	}
+
+	/**
+	 * Alias to getRequestParams()
+	 *
+	 * @return array
+	 */
+	public function getParameters()
+	{
+		return $this->getRequestParams();
 	}
 }
