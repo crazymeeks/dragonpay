@@ -4,6 +4,7 @@ namespace Crazymeeks\Foundation\PaymentGateway;
 
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Token;
+use Crazymeeks\Foundation\Exceptions\InvalidArrayParameterException;
 
 class Parameters
 {
@@ -131,10 +132,7 @@ class Parameters
 	}
 
 	private function createDigest( array $parameters )
-	{
-		// unset($parameters['param1'], $parameters['param2']);
-		// echo implode(':', $parameters);exit;
-		
+	{	
 		$digest = sha1(implode(':', $parameters));
 
 		return $digest;
@@ -254,7 +252,6 @@ class Parameters
 	 */
 	public function query()
 	{
-		//print_r($this->get());exit;
 		return http_build_query($this->get(), '', '&');
 	}
 }
