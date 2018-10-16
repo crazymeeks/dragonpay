@@ -13,7 +13,7 @@ $dotenv->load();
 </form>
 <?php
 if ( isset($_POST['submit']) ) {
-    $parameters = [
+    /*$parameters = [
 
       'merchantid' => 'MERCHANTID', # Varchar(20) A unique code assigned to Merchant
       'txnid' => 'TXNID', # Varchar(40) A unique id identifying this specific transaction from the merchant site
@@ -36,11 +36,11 @@ if ( isset($_POST['submit']) ) {
   // With token
    /*$token = $dragonpay->getToken(
             $parameters
-   );*/
+   );
 
   # Using query parameters
   $dragonpay->setParameters($parameters)->away();
-  exit;
+  exit;*/
   
   
   # Using credit card
@@ -74,7 +74,7 @@ if ( isset($_POST['submit']) ) {
   $parameters['password'] = getenv('MERCHANT_PROD_KEY');
   $parameters['txnid'] = 'TXNID-' . rand();
   
-  $dragonpay->useCreditCard($parameters);
+  $dragonpay->useCreditCard($parameters)->getToken($parameters);
   
   $dragonpay->away();exit;
 }
