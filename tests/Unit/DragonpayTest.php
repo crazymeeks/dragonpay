@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
-use Crazymeeks\Foundation\Factory;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay;
 use Crazymeeks\Foundation\Exceptions\PaymentException;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Token;
