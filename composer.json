@@ -28,11 +28,11 @@
             "type": "package",
             "package": {
                 "name": "crazymeeks/dragonpay",
-                "version": "v1.0.0",
+                "version": "v3.0.0",
                 "source": {
                     "url": "git://github.com/crazymeeks/dragonpay",
                     "type": "git",
-                    "reference": "v1.1.4"
+                    "reference": "v3.0.0"
                 },
                 "autoload": {
                     "psr-4": {
