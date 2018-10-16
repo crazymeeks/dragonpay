@@ -1,5 +1,5 @@
 <h1 align="center">
-	![Dragonpay](https://www.dragonpay.ph/wp-content/themes/wp365_theme/img/logo_dragonpay.png)  
+	<img src="https://www.dragonpay.ph/wp-content/themes/wp365_theme/img/logo_dragonpay.png" alt="Dragonpay">
 	Dragonpay Payment Gateway Library
 	<br>
 	<img src="https://travis-ci.org/crazymeeks/dragonpay.svg?branch=develop">
