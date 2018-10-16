@@ -205,6 +205,8 @@ class Dragonpay implements PaymentGatewayInterface
     public function setParameters( array $parameters )
     {
         $this->setRequestParameters( $parameters );
+
+        return $this;
     }
     
     /**
