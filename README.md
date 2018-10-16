@@ -15,7 +15,9 @@
 # Dragonpay Payment Gateway Library
 The Dragonpay payment gateway library in PHP
 
-See the [WIKI](https://github.com/crazymeeks/dragonpay/wiki) for documentation
+A new version has been release. check it [here](https://github.com/crazymeeks/dragonpay/wiki/Dragonpay-3.0)
+
+See the [v1.1.4](https://github.com/crazymeeks/dragonpay/wiki) for documentation
 
 
 ## Report Bug
