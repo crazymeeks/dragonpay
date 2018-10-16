@@ -34,7 +34,46 @@ class Parameters
     const REQUEST_TOKEN_PARAM_PARAM2 = 'param2';
     
 
-    protected $parameters = [];
+
+	/**
+	 * Dragonpay credit card required params
+	 */
+	const BILLINGINFO_MERCHANT_ID    = 'merchantId';
+	const BILLINGINFO_MERCHANT_TXNID = 'merchantTxnId';
+	const BILLINGINFO_FIRSTNAME      = 'firstName';
+	const BILLINGINFO_LASTNAME       = 'lastName';
+	const BILLINGINFO_ADDRESS1       = 'address1';
+	const BILLINGINFO_ADDRESS2       = 'address2';
+	const BILLINGINFO_CITY           = 'city';
+	const BILLINGINFO_STATE          = 'state';
+	const BILLINGINFO_COUNTRY        = 'country';
+	const BILLINGINFO_ZIPCODE        = 'zipCode';
+	const BILLINGINFO_TELNO          = 'telNo';
+	const BILLINGINFO_EMAIL          = 'email';
+	
+
+	/**
+	 * Dragonpay credit card required params
+	 */
+	static $required_sendbillinginfo_parameters = array(
+		self::BILLINGINFO_MERCHANT_ID,
+		self::BILLINGINFO_MERCHANT_TXNID,
+		self::BILLINGINFO_FIRSTNAME,
+		self::BILLINGINFO_LASTNAME,
+		self::BILLINGINFO_ADDRESS1,
+		self::BILLINGINFO_ADDRESS2,
+		self::BILLINGINFO_CITY,
+		self::BILLINGINFO_STATE,
+		self::BILLINGINFO_COUNTRY,
+		self::BILLINGINFO_ZIPCODE,
+		self::BILLINGINFO_TELNO,
+		self::BILLINGINFO_EMAIL,
+	);
+
+
+	protected $parameters = [];
+	
+	protected $billing_info_parameters = [];
 
 	/**
 	 * @var @param Crazymeeks\Foundation\PaymentGateway\Dragonpay
@@ -56,29 +95,45 @@ class Parameters
 	 *
 	 * @param array $parameters
 	 * 
-	 * @return static
+	 * @return array
 	 */
 	public function setRequestParameters( array $parameters )
 	{
+		$parameters = array_filter($parameters);
+
+		if ( ! array_key_exists('merchantid', $parameters)
+			&& ! array_key_exists('txnid', $parameters)
+			&& ! array_key_exists('amount', $parameters)
+			&& ! array_key_exists('ccy', $parameters)
+			&& ! array_key_exists('description', $parameters)
+			&& ! array_key_exists('email', $parameters) ) {
+				throw InvalidArrayParameterException::invalid_array_key();
+		}
+
+
 		$_parameters[Parameters::REQUEST_PARAM_MERCHANT_ID] = $parameters[Parameters::REQUEST_PARAM_MERCHANT_ID];
 		$_parameters[Parameters::REQUEST_PARAM_TXNID] = $parameters[Parameters::REQUEST_PARAM_TXNID];
 		$_parameters[Parameters::REQUEST_PARAM_AMOUNT] = number_format($parameters[Parameters::REQUEST_PARAM_AMOUNT], 2, '.', '');
 		$_parameters[Parameters::REQUEST_PARAM_CCY] = $parameters[Parameters::REQUEST_PARAM_CCY];
 		$_parameters[Parameters::REQUEST_PARAM_DESCRIPTION] = $parameters[Parameters::REQUEST_PARAM_DESCRIPTION];
 		$_parameters[Parameters::REQUEST_PARAM_EMAIL] = $parameters[Parameters::REQUEST_PARAM_EMAIL];
-		$_parameters[Parameters::REQUEST_PARAM_DIGEST] = $this->createDigest($parameters);
-		$_parameters[Parameters::REQUEST_PARAM_PARAM1] = $parameters[Parameters::REQUEST_PARAM_PARAM1];
-		$_parameters[Parameters::REQUEST_PARAM_PARAM2] = $parameters[Parameters::REQUEST_PARAM_PARAM2];
+		$_parameters['password'] = $parameters['password'];
 		
-		unset($parameters['password']);
 		$_parameters = array_filter( $_parameters );
-
+		
+		$_parameters['digest'] = $this->createDigest($_parameters);
+		
+		unset($parameters['password'], $_parameters['password']);
+		$_parameters[Parameters::REQUEST_PARAM_PARAM1] = isset($parameters[Parameters::REQUEST_PARAM_PARAM1]) ? $parameters[Parameters::REQUEST_PARAM_PARAM1] : '';
+		$_parameters[Parameters::REQUEST_PARAM_PARAM2] = isset($parameters[Parameters::REQUEST_PARAM_PARAM2]) ? $parameters[Parameters::REQUEST_PARAM_PARAM2] : '';
+		
 		return $this->parameters = $_parameters;
 	}
 
 	private function createDigest( array $parameters )
 	{
-		unset($parameters['param1'], $parameters['param2']);
+		// unset($parameters['param1'], $parameters['param2']);
+		// echo implode(':', $parameters);exit;
 		
 		$digest = sha1(implode(':', $parameters));
 
@@ -100,17 +155,60 @@ class Parameters
 		$_parameters[Parameters::REQUEST_TOKEN_PARAM_MERCHANT_TXNID] = $parameters[Parameters::REQUEST_PARAM_TXNID];
 		$_parameters[Parameters::REQUEST_TOKEN_PARAM_AMOUNT] = number_format($parameters[Parameters::REQUEST_PARAM_AMOUNT], 2, '.', '');
 		$_parameters[Parameters::REQUEST_TOKEN_PARAM_CCY] = $parameters[Parameters::REQUEST_PARAM_CCY];
-		$_parameters[Parameters::REQUEST_TOKEN_PARAM_DESCRIPTION] = $parameters[Parameters::REQUEST_PARAM_DESCRIPTION];
+		$_parameters[Parameters::REQUEST_TOKEN_PARAM_DESCRIPTION] = urlencode($parameters[Parameters::REQUEST_PARAM_DESCRIPTION]);
 		$_parameters[Parameters::REQUEST_TOKEN_PARAM_EMAIL] = $parameters[Parameters::REQUEST_PARAM_EMAIL];
-		$_parameters[Parameters::REQUEST_TOKEN_PARAM_PARAM1] = $parameters[Parameters::REQUEST_PARAM_PARAM1];
-		$_parameters[Parameters::REQUEST_TOKEN_PARAM_PARAM2] = $parameters[Parameters::REQUEST_PARAM_PARAM2];
+		$_parameters[Parameters::REQUEST_TOKEN_PARAM_PARAM1] = isset($parameters[Parameters::REQUEST_PARAM_PARAM1]) ? $parameters[Parameters::REQUEST_PARAM_PARAM1] : '';
+		$_parameters[Parameters::REQUEST_TOKEN_PARAM_PARAM2] = isset($parameters[Parameters::REQUEST_PARAM_PARAM2]) ? $parameters[Parameters::REQUEST_PARAM_PARAM2] : '';
 
 		$_parameters = array_filter( $_parameters );
 
 		return $this->parameters = $_parameters;
 
     }
-    
+	
+	/**
+	 * Set|Prepare billing info parameter. Use for Credit Card transaction
+	 * 
+	 * @param array $parameters
+	 *
+	 * @return array
+	 * 
+	 * @throws InvalidArrayParameterException
+	 */
+	public function setBillingInfoParameters( array $parameters )
+	{
+
+		if ( ! array_key_exists('merchantid', $parameters)
+			&& ! array_key_exists('txnid', $parameters)
+			&& ! array_key_exists('firstName', $parameters)
+			&& ! array_key_exists('lastName', $parameters)
+			&& ! array_key_exists('address1', $parameters)
+			&& ! array_key_exists('address2', $parameters)
+			&& ! array_key_exists('city', $parameters)
+			&& ! array_key_exists('state', $parameters)
+			&& ! array_key_exists('country', $parameters)
+			&& ! array_key_exists('telNo', $parameters)
+			&& ! array_key_exists('email', $parameters) ) {
+
+				throw InvalidArrayParameterException::send_billing_info_parameters();
+		}
+
+		$_parameters[self::BILLINGINFO_MERCHANT_ID]    = $parameters[self::REQUEST_PARAM_MERCHANT_ID];
+		$_parameters[self::BILLINGINFO_MERCHANT_TXNID] = $parameters[self::REQUEST_PARAM_TXNID];
+		$_parameters[self::BILLINGINFO_FIRSTNAME]      = $parameters[self::BILLINGINFO_FIRSTNAME];
+		$_parameters[self::BILLINGINFO_LASTNAME]       = $parameters[self::BILLINGINFO_LASTNAME];
+		$_parameters[self::BILLINGINFO_ADDRESS1]       = $parameters[self::BILLINGINFO_ADDRESS1];
+		$_parameters[self::BILLINGINFO_ADDRESS2]       = $parameters[self::BILLINGINFO_ADDRESS2];
+		$_parameters[self::BILLINGINFO_CITY]           = $parameters[self::BILLINGINFO_CITY];
+		$_parameters[self::BILLINGINFO_STATE]          = $parameters[self::BILLINGINFO_STATE];
+		$_parameters[self::BILLINGINFO_COUNTRY]        = $parameters[self::BILLINGINFO_COUNTRY];
+		$_parameters[self::BILLINGINFO_ZIPCODE]        = isset($parameters[self::BILLINGINFO_ZIPCODE]) ? $parameters[self::BILLINGINFO_ZIPCODE] : '';
+		$_parameters[self::BILLINGINFO_TELNO]          = $parameters[self::BILLINGINFO_TELNO];
+		$_parameters[self::BILLINGINFO_EMAIL]          = $parameters[self::BILLINGINFO_EMAIL];
+
+		return $this->billing_info_parameters = array_filter($_parameters);
+	}
+
     /**
      * Get the parameters passed to DP
      *
@@ -136,7 +234,17 @@ class Parameters
 		}
 		
         return $parameters;
-    }
+	}
+	
+	/**
+	 * Get billing info parameters
+	 *
+	 * @return array
+	 */
+	public function billing_info()
+	{
+		return $this->billing_info_parameters;
+	}
 
 
     /**
@@ -146,7 +254,7 @@ class Parameters
 	 */
 	public function query()
 	{
-		
+		//print_r($this->get());exit;
 		return http_build_query($this->get(), '', '&');
 	}
 }

@@ -3,10 +3,13 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
-
+use Crazymeeks\Foundation\Factory;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay;
 use Crazymeeks\Foundation\Exceptions\PaymentException;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Token;
+
+use Crazymeeks\Foundation\Adapter\SoapClientAdapter;
+use Crazymeeks\Foundation\PaymentGateway\BillingInfoVerifier;
 
 class DragonpayTest extends TestCase
 {
@@ -30,7 +33,7 @@ class DragonpayTest extends TestCase
             'ccy' => 'PHP', # Char(3) The currency of the amount
             'description' => 'Test', # Varchar(128) A brief description of what the payment is for
             'email' => 'test@example.com', # Varchar(40) email address of customer
-            'digest' => sha1('MERCHANTID:TXNID:1:PHP:Test:test@example.com:PASSWORD'), # This will be use to generate a digest key
+            'digest' => sha1('MERCHANTID:TXNID:1.00:PHP:Test:test@example.com:PASSWORD'), # This will be use to generate a digest key
             'param1' => 'param1', # Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed
             'param2' => 'param2', # Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed
         ]);
@@ -57,7 +60,7 @@ class DragonpayTest extends TestCase
             'ccy' => 'PHP', # Char(3) The currency of the amount
             'description' => 'Test', # Varchar(128) A brief description of what the payment is for
             'email' => 'test@example.com', # Varchar(40) email address of customer
-            'digest' => sha1('MERCHANTID:TXNID:1:PHP:Test:test@example.com:PASSWORD'), # This will be use to generate a digest key
+            'digest' => sha1('MERCHANTID:TXNID:1.00:PHP:Test:test@example.com:PASSWORD'), # This will be use to generate a digest key
             'param1' => 'param1', # Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed
             'param2' => 'param2', # Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed, '', '&'
         ], '', '&');
@@ -147,10 +150,11 @@ class DragonpayTest extends TestCase
         );
         $dragonpay->filterPaymentChannel( Dragonpay::ONLINE_BANK );
         $url = $dragonpay->away( true );
+        
         $url = parse_url($url);
-
+        
         $query_params = explode('=', $url['query']);
-
+        
         $this->assertEquals('merchantid', $query_params[0]);
 
         $this->assertEquals('test.dragonpay.ph', $url['host']);
@@ -177,9 +181,116 @@ class DragonpayTest extends TestCase
         
         $url = parse_url($url);
         $query_params = explode('=', $url['query']);
-        
         $this->assertEquals('tokenid', $query_params[0]);
+        $this->assertEquals(64, $query_params[2]);
         
     }
 
+    /**
+     * @test
+     */
+    public function it_should_set_payment_url()
+    {
+        $dragonpay = new Dragonpay();
+
+        $dragonpay->setPaymentUrl('http://test.example.com/test.aspx' , 'sandbox');
+
+        $this->assertEquals( 'http://test.example.com/test.aspx', $dragonpay->getWebserviceUrl() );
+        
+        $this->assertEquals('sandbox', $dragonpay->getPaymentMode());
+    }
+
+    /**
+     * @test
+     * @dataProvider Tests\DataProviders\DragonpayDataProvider::billing_info()
+     */
+    public function it_should_pay_using_credit_card_with_using_query_parameters( $parameters )
+    {
+        $dragonpay = new Dragonpay();
+
+        $verifier = \Mockery::mock(BillingInfoVerifier::class);
+        $soap = \Mockery::mock(SoapClientAdapter::class);
+
+        $verifier->shouldReceive('setParameterObject')
+                 ->with($dragonpay->parameters);
+        $verifier->shouldReceive('send')
+                 ->with($soap, $dragonpay->getBillingInfoUrl())
+                 ->andReturn(true);
+
+        $soap->shouldReceive('setParameters')
+             ->with($dragonpay->parameters->billing_info());
+        $soap->shouldReceive('execute')
+             ->with($dragonpay->getBillingInfoUrl() . '?wsdl', array(
+                'location' => $dragonpay->getBillingInfoUrl(),
+                'trace' => 1,
+            ));
+
+
+        $parameters['merchantid'] = getenv('MERCHANT_ID');
+        $parameters['password'] = getenv('MERCHANT_KEY');
+        $parameters['txnid'] = 'TXNID-' . rand();
+
+        $dragonpay->useCreditCard($parameters, $verifier, $soap);
+        
+        $url = $dragonpay->away( true );
+        
+        $url = parse_url($url);
+        $query_params = explode('=', $url['query']);
+        
+        
+        $this->assertEquals('merchantid', $query_params[0]);
+        $this->assertEquals(64, $dragonpay->getPaymentChannel());
+        
+    }
+
+    /**
+     * @test
+     * @dataProvider Tests\DataProviders\DragonpayDataProvider::billing_info()
+     */
+    public function it_should_pay_using_credit_card_with_requested_token( $parameters )
+    {
+        $dragonpay = new Dragonpay();
+
+        $verifier = \Mockery::mock(BillingInfoVerifier::class);
+        $soap = \Mockery::mock(SoapClientAdapter::class);
+
+        $verifier->shouldReceive('setParameterObject')
+                 ->with($dragonpay->parameters);
+        $verifier->shouldReceive('send')
+                 ->with($soap, $dragonpay->getBillingInfoUrl())
+                 ->andReturn(true);
+
+        $soap->shouldReceive('setParameters')
+             ->with($dragonpay->parameters->billing_info());
+        $soap->shouldReceive('execute')
+             ->with($dragonpay->getBillingInfoUrl() . '?wsdl', array(
+                'location' => $dragonpay->getBillingInfoUrl(),
+                'trace' => 1,
+            ));
+
+
+        $parameters['merchantid'] = getenv('MERCHANT_ID');
+        $parameters['password'] = getenv('MERCHANT_KEY');
+        $parameters['txnid'] = 'TXNID-' . rand();
+
+        $token = $dragonpay->useCreditCard($parameters, $verifier, $soap)
+                  ->getToken($parameters);
+        
+        $url = $dragonpay->away( true );
+        
+        $url = parse_url($url);
+        $query_params = explode('=', $url['query']);
+        $soap_url = $url['scheme'] . '://' . $url['host'] . $url['path'];
+        $this->assertEquals('tokenid', $query_params[0]);
+        $this->assertEquals($soap_url, $dragonpay->getWebserviceUrl());
+        $this->assertInstanceof(Token::class, $token);
+        
+    }
+
+
+    public function tearDown()
+    {
+        \Mockery::close();
+        parent::tearDown();
+    }
 }

@@ -10,34 +10,19 @@
 
 namespace Crazymeeks\Foundation\PaymentGateway;
 
-use SoapClient;
+use ReflectionClass;
 use Crazymeeks\Foundation\PaymentGateway\Digest;
 use Crazymeeks\Foundation\PaymentGateway\RequestBag;
+use Crazymeeks\Foundation\Adapter\SoapClientAdapter;
 use Crazymeeks\Foundation\PaymentGateway\Parameters;
 use Crazymeeks\Foundation\Exceptions\PaymentException;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Token;
+use Crazymeeks\Foundation\PaymentGateway\BillingInfoVerifier;
 use Crazymeeks\Contracts\Foundation\PaymentGateway\PaymentGatewayInterface;
 
 class Dragonpay implements PaymentGatewayInterface
 {
-
-	/**
-	 * Dragonpay credit card required params
-	 */
-	const BILLINGINFO_MERCHANT_ID    = 'merchantId';
-	const BILLINGINFO_MERCHANT_TXNID = 'merchantTxnId';
-	const BILLINGINFO_FIRSTNAME      = 'firstName';
-	const BILLINGINFO_LASTNAME       = 'lastName';
-	const BILLINGINFO_ADDRESS1       = 'address1';
-	const BILLINGINFO_ADDRESS2       = 'address2';
-	const BILLINGINFO_CITY           = 'city';
-	const BILLINGINFO_STATE          = 'state';
-	const BILLINGINFO_COUNTRY        = 'country';
-	const BILLINGINFO_ZIPCODE        = 'zipCode';
-	const BILLINGINFO_TELNO          = 'telNo';
-    const BILLINGINFO_EMAIL          = 'email';
     
-
     const INVALID_PAYMENT_GATEWAY_ID = 101;
     const INCORRECT_SECRET_KEY = 102;
     const INVALID_REFERENCE_NUMBER = 103;
@@ -80,14 +65,14 @@ class Dragonpay implements PaymentGatewayInterface
 	 *
 	 * @var string
 	 */
-	const SANDBOX_URL = 'http://test.dragonpay.ph/Pay.aspx?';
+	protected $sandbox_url = 'http://test.dragonpay.ph/Pay.aspx';
 
 	/**
 	 * DragonPay production url
 	 *
 	 * @var string
 	 */
-    const PRODUCTION_URL = 'https://gw.dragonpay.ph/Pay.aspx?';
+    protected $production_url = 'https://gw.dragonpay.ph/Pay.aspx';
     
     /**
      * Payment Channels
@@ -127,26 +112,6 @@ class Dragonpay implements PaymentGatewayInterface
 	protected $sandboxWebServiceUrl = 'http://test.dragonpay.ph/DragonPayWebService/MerchantService.asmx';
 
 	protected $productionWebServiceUrl = 'https://secure.dragonpay.ph/DragonPayWebService/MerchantService.asmx';
-
-	/**
-	 * Dragonpay credit card required params
-	 */
-	static $required_sendbillinginfo_parameters = array(
-		self::BILLINGINFO_MERCHANT_ID,
-		self::BILLINGINFO_MERCHANT_TXNID,
-		self::BILLINGINFO_FIRSTNAME,
-		self::BILLINGINFO_LASTNAME,
-		self::BILLINGINFO_ADDRESS1,
-		self::BILLINGINFO_ADDRESS2,
-		self::BILLINGINFO_CITY,
-		self::BILLINGINFO_STATE,
-		self::BILLINGINFO_COUNTRY,
-		self::BILLINGINFO_ZIPCODE,
-		self::BILLINGINFO_TELNO,
-		self::BILLINGINFO_EMAIL,
-	);
-
-
     
 
 	/**
@@ -188,15 +153,6 @@ class Dragonpay implements PaymentGatewayInterface
 	 * @var string
 	 */
     public $token = null;
-
-	/**
-	 * DragonPay gateway url. Sandbox mode by default
-	 *
-	 * @see $sandbox_url or $production_url
-	 *
-	 * @var string
-	 */
-	protected $gateway_url = self::SANDBOX_URL;
 
 	/**
 	 * Flag if sandbox mode
@@ -277,9 +233,12 @@ class Dragonpay implements PaymentGatewayInterface
 
         $parameters = $this->parameters->prepareRequestTokenParameters( $parameters );
         
-        $webservice_url = $this->getWebserviceUrl();
-        
-		$wsdl = new SoapClient($webservice_url . '?wsdl', array(
+        $webservice_url = $this->is_sandbox ? $this->sandboxWebServiceUrl : $this->productionWebServiceUrl;
+        if ( ! \class_exists(\SoapClient::class) ) {
+            throw new \Exception('SoapClient class not found. Please install it.');
+        }
+
+		$wsdl = new \SoapClient($webservice_url . '?wsdl', array(
 			'location' => $webservice_url,
 			'trace'    => 1,
 		));
@@ -299,7 +258,94 @@ class Dragonpay implements PaymentGatewayInterface
     private function throwException( $code )
     {  
         $this->setDebugMessage( $this->error_codes[$code] );
-        throw new PaymentException( $this->seeError() );
+        $exception = "Crazymeeks\Foundation\Exceptions\\" . $this->getExceptionClass( $code );
+        throw new $exception( $this->seeError() );
+    }
+
+    /**
+     * Get exception class based on error code
+     * that was previously returned by PS
+     *
+     * @param int $code
+     * 
+     * @return string
+     */
+    private function getExceptionClass( $code )
+    {
+        $exceptions = [
+            self::INVALID_PAYMENT_GATEWAY_ID => 'InvalidPaymentGatewayIdException',
+            self::INCORRECT_SECRET_KEY => 'IncorrectSecretKeyException',
+            self::INVALID_REFERENCE_NUMBER => 'InvalidReferenceNumberException',
+            self::UNAUTHORIZED_ACCESS => 'UnauthorizedAccessException',
+            self::INVALID_TOKEN => 'InvalidTokenException',
+            self::CURRENCY_NOT_SUPPORTED => 'CurrencyNotSupportedException',
+            self::TRANSACTION_CANCELLED => 'TransactionCancelledException',
+            self::INSUFFICIENT_FUNDS => 'InsufficientFundsException',
+            self::TRANSACTION_LIMIT_EXCEEDED => 'TransactionLimitExceededException',
+            self::ERROR_IN_OPERATION => 'ErrorInOperationException',
+            self::INVALID_PARAMETERS => 'InvalidParametersException',
+            self::INVALID_MERCHANT_ID => 'InvalidMerchantIdException',
+            self::INVALID_MERCHANT_PASSWORD => 'InvalidMerchantPasswordException',
+        ];
+
+        return $exceptions[$code];
+    }
+
+    /**
+     * Using credit card payment.
+     *
+     * @param array $parameters
+     * @param Crazymeeks\Foundation\PaymentGateway\BillingInfoVerifier
+     * 
+     * @return $this
+     */
+    public function useCreditCard( array $parameters, BillingInfoVerifier $verifier = null, SoapClientAdapter $soap = null )
+    {
+        $this->setParameters( $parameters );
+
+        $this->parameters->setBillingInfoParameters( $parameters );
+        
+		$this->filterPaymentChannel( Dragonpay::CREDIT_CARD );
+
+        $url = $this->getBillingInfoUrl();
+        
+        if ( is_null($verifier) ) {
+            $verifier = new BillingInfoVerifier();
+        }
+        if ( is_null($soap) ) {
+            $soap = new SoapClientAdapter();
+        }
+        
+        $verifier->setParameterObject( $this->parameters );
+
+        $verifier->send( $soap, $url );
+        
+		return $this;
+    }
+
+    /**
+     * Set PS billing info url.
+     * 
+     * Billing info is used when using Credit Card
+     *
+     * @param string $url
+     * 
+     * @return void
+     */
+    public function setBillingInfoUrl( $url )
+    {
+        $url = rtrim((rtrim($url, '/')), '?');
+        $this->sendbillinginfo_url = $url;
+    }
+
+    /**
+     * Get billing info url
+     *
+     * @return string
+     */
+    public function getBillingInfoUrl()
+    {
+        return $this->sendbillinginfo_url;
     }
 
     /**
@@ -366,7 +412,55 @@ class Dragonpay implements PaymentGatewayInterface
      */
     private function getUrl()
     {
-        return $this->is_sandbox ? $this->sandboxWebServiceUrl : $this->productionWebServiceUrl;
+        return $this->is_sandbox ? $this->sandbox_url : $this->production_url;
+    }
+
+    /**
+     * Set payment url
+     * 
+     * @param string $url
+     * @param string $mode    The payment mode(sandbox|production)
+     *
+     * @return void
+     */
+    public function setPaymentUrl( $url, $mode )
+    {
+        $mode = strtolower($mode);
+        if ( ! in_array($mode, ['sandbox', 'production']) ) {
+            throw new \Exception(sprintf("Invalid mode '%s'. Please select 'sandbox' or 'production' as payment mode.", $mode));
+        }
+
+        $url = rtrim(rtrim($url, '/'), '?');
+        
+        if ( $mode === 'sandbox' ) {
+            $this->is_sandbox = true;
+            if ( $this->token instanceof Token ) {
+                $this->sandboxWebServiceUrl = $url;
+            } else {
+                $this->sandbox_url = $url;
+            }
+
+            
+        } else {
+            $this->is_sandbox = false;
+
+            if ( $this->token instanceof Token ) {
+                $this->productionWebServiceUrl = $url;
+            } else {
+                $this->production_url = $url;
+            }
+
+        }
+    }
+
+    /**
+     * Get payment mode
+     * 
+     * @return string
+     */
+    public function getPaymentMode()
+    {
+        return $this->is_sandbox ? 'sandbox' : 'production';
     }
 
     /**
@@ -380,7 +474,7 @@ class Dragonpay implements PaymentGatewayInterface
     {
         if ( $test ) {
 
-            return $this->getUrl() . '?' . $this->parameters->query();exit;
+            return $this->getUrl() . '?' . $this->parameters->query();
             
         }
 
