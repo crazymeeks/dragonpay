@@ -12,16 +12,12 @@
 	<a href="https://github.com/crazymeeks/dragonpay/network"><img src="https://img.shields.io/github/forks/crazymeeks/dragonpay.svg?style=social&label=Fork" alt="Fork"></a>
 </h1>
 
-# Dragonpay Payment Gateway Library
 The Dragonpay payment gateway library in PHP
 
 ## A new version has been released. check it [here](https://github.com/crazymeeks/dragonpay/wiki/Dragonpay-3.0)
-### Note: v1.1.4 will not be supported and deprecate soon. Please use the latest released.
-See the [v1.1.4](https://github.com/crazymeeks/dragonpay/wiki) for documentation. Old version and will be deprecate soon!
+### Note: v1.1.4 will not be supported and will deprecate soon. Please use the latest released.
+See the old version [v1.1.4](https://github.com/crazymeeks/dragonpay/wiki) for documentation.
 
-
-## Report Bug
-Email: jeffclaud17@gmail.com
 
 ## Author
 Jeff Claud[jeffclaud17@gmail.com]
