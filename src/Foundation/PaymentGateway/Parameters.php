@@ -128,7 +128,7 @@ class Parameters
 		$_parameters[Parameters::REQUEST_PARAM_PARAM1] = isset($parameters[Parameters::REQUEST_PARAM_PARAM1]) ? $parameters[Parameters::REQUEST_PARAM_PARAM1] : '';
 		$_parameters[Parameters::REQUEST_PARAM_PARAM2] = isset($parameters[Parameters::REQUEST_PARAM_PARAM2]) ? $parameters[Parameters::REQUEST_PARAM_PARAM2] : '';
 		
-		return $this->parameters = $_parameters;
+		return $this->parameters = array_filter( $_parameters );
 	}
 
 	private function createDigest( array $parameters )
