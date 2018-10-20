@@ -4,7 +4,6 @@
 	<img src="https://travis-ci.org/crazymeeks/dragonpay.svg?branch=develop">
 	<a href="https://packagist.org/packages/crazymeeks/dragonpay"><img src="https://img.shields.io/packagist/v/crazymeeks/dragonpay.svg" alt="Packgist Latest Version"></a>
 	<a href="https://packagist.org/packages/crazymeeks/dragonpay/stats"><img src="https://img.shields.io/packagist/dt/crazymeeks/dragonpay.svg?colorB=00e500" alt="Packgist Downloads"></a>
-	<a href="https://github/contributors/crazymeeks/dragonpay"><img src="https://img.shields.io/github/contributors/crazymeeks/dragonpay.svg?maxAge=2592000" alt="Contributors"></a>
 	<a href="https://packagist.org/packages/crazymeeks/dragonpay"><img src="https://img.shields.io/packagist/l/crazymeeks/dragonpay.svg" alt="License"></a>
 	<br>
 	<a href="https://github.com/crazymeeks/dragonpay/watchers"><img src="https://img.shields.io/github/watchers/crazymeeks/dragonpay.svg?style=social&label=Watch&maxAge=2592000" alt="Watcher"></a>
