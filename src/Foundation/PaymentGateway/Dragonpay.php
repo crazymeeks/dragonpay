@@ -17,6 +17,7 @@ use Crazymeeks\Foundation\Adapter\SoapClientAdapter;
 use Crazymeeks\Foundation\PaymentGateway\Parameters;
 use Crazymeeks\Foundation\Exceptions\PaymentException;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Token;
+use Crazymeeks\Foundation\PaymentGateway\Options\Processor;
 use Crazymeeks\Foundation\PaymentGateway\BillingInfoVerifier;
 use Crazymeeks\Contracts\Foundation\PaymentGateway\PaymentGatewayInterface;
 
@@ -219,6 +220,23 @@ class Dragonpay implements PaymentGatewayInterface
     public function setRequestParameters( array $parameters )
     {
         $this->parameters->setRequestParameters($parameters);
+    }
+
+    /**
+     * Preselecting payment channels by
+     * passing "procid" in the parameters
+     *
+     * @param string $procid     The valid procid
+     * 
+     * @return $this
+     */
+    public function withProcid( $procid )
+    {
+        Processor::allowedProcId($procid);
+
+        $this->parameters->add(['procid' => $procid]);
+
+        return $this;
     }
 
     /**
