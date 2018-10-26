@@ -6,6 +6,7 @@ use Tests\TestCase;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay;
 use Crazymeeks\Foundation\Exceptions\PaymentException;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Token;
+use Crazymeeks\Foundation\PaymentGateway\Options\Processor;
 
 use Crazymeeks\Foundation\Adapter\SoapClientAdapter;
 use Crazymeeks\Foundation\PaymentGateway\BillingInfoVerifier;
@@ -284,6 +285,31 @@ class DragonpayTest extends TestCase
         $this->assertEquals($soap_url, $dragonpay->getWebserviceUrl());
         $this->assertInstanceof(Token::class, $token);
         
+    }
+
+    /**
+     * @test
+     * @dataProvider Tests\DataProviders\DragonpayDataProvider::request_parameters()
+     */
+    public function it_should_set_procid_in_the_parameters( $parameters )
+    {
+        
+        $dragonpay = new Dragonpay();
+        $dragonpay->setParameters($parameters)
+                  ->withProcid(Processor::CREDIT_CARD);
+        $this->assertArrayHasKey('procid', $dragonpay->parameters->get());
+    }
+
+    /**
+     * @test
+     * @dataProvider Tests\DataProviders\DragonpayDataProvider::request_parameters()
+     * @expectedException Crazymeeks\Foundation\Exceptions\InvalidProcessIdException
+     */
+    public function it_should_throw_exception_if_process_id_is_not_in_the_list( $parameters )
+    {
+        $dragonpay = new Dragonpay();
+        $dragonpay->setParameters($parameters)
+                  ->withProcid('dfd');
     }
 
 

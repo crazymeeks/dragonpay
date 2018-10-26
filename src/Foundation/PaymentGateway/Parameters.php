@@ -207,6 +207,18 @@ class Parameters
 		return $this->billing_info_parameters = array_filter($_parameters);
 	}
 
+	/**
+	 * Add|Push new parameters in the parameter array
+	 *
+	 * @param array $parameters
+	 * 
+	 * @return void
+	 */
+	public function add( array $parameters )
+	{
+		$this->parameters =  array_merge($this->parameters, (array) $parameters);
+	}
+
     /**
      * Get the parameters passed to DP
      *
