@@ -32,8 +32,8 @@ class DragonpayTest extends TestCase
             'amount' => number_format(1, 2, '.', ''), # Numeric(12,2) The amount to get from the end-user (XXXX.XX)
             'ccy' => 'PHP', # Char(3) The currency of the amount
             'description' => 'Test', # Varchar(128) A brief description of what the payment is for
-            'email' => 'test@example.com', # Varchar(40) email address of customer
-            'digest' => sha1('MERCHANTID:TXNID:1.00:PHP:Test:test@example.com:PASSWORD'), # This will be use to generate a digest key
+            'email' => 'some@merchant.ph', # Varchar(40) email address of customer
+            'digest' => sha1('MERCHANTID:TXNID:1.00:PHP:Test:some@merchant.ph:PASSWORD'), # This will be use to generate a digest key
             'param1' => 'param1', # Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed
             'param2' => 'param2', # Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed
         ]);
@@ -59,8 +59,8 @@ class DragonpayTest extends TestCase
             'amount' => number_format(1, 2, '.', ''), # Numeric(12,2) The amount to get from the end-user (XXXX.XX)
             'ccy' => 'PHP', # Char(3) The currency of the amount
             'description' => 'Test', # Varchar(128) A brief description of what the payment is for
-            'email' => 'test@example.com', # Varchar(40) email address of customer
-            'digest' => sha1('MERCHANTID:TXNID:1.00:PHP:Test:test@example.com:PASSWORD'), # This will be use to generate a digest key
+            'email' => 'some@merchant.ph', # Varchar(40) email address of customer
+            'digest' => sha1('MERCHANTID:TXNID:1.00:PHP:Test:some@merchant.ph:PASSWORD'), # This will be use to generate a digest key
             'param1' => 'param1', # Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed
             'param2' => 'param2', # Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed, '', '&'
         ], '', '&');
@@ -269,8 +269,8 @@ class DragonpayTest extends TestCase
             ));
 
 
-        $parameters['merchantid'] = getenv('MERCHANT_ID');
-        $parameters['password'] = getenv('MERCHANT_KEY');
+        $parameters['merchantid'] = getenv('MERCHANT_ID') ? getenv('MERCHANT_ID') : 'MERCHANT_ID';
+        $parameters['password'] = getenv('MERCHANT_KEY') ? getenv('MERCHANT_KEY') : 'MERCHANT_KEY';
         $parameters['txnid'] = 'TXNID-' . rand();
 
         $token = $dragonpay->useCreditCard($parameters, $verifier, $soap)

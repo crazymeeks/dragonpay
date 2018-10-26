@@ -321,6 +321,7 @@ class Dragonpay implements PaymentGatewayInterface
      */
     public function useCreditCard( array $parameters, BillingInfoVerifier $verifier = null, SoapClientAdapter $soap = null )
     {
+        
         $this->setParameters( $parameters );
 
         $this->parameters->setBillingInfoParameters( $parameters );

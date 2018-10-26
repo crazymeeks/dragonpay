@@ -111,7 +111,6 @@ class Parameters
 				throw InvalidArrayParameterException::invalid_array_key();
 		}
 
-
 		$_parameters[Parameters::REQUEST_PARAM_MERCHANT_ID] = $parameters[Parameters::REQUEST_PARAM_MERCHANT_ID];
 		$_parameters[Parameters::REQUEST_PARAM_TXNID] = $parameters[Parameters::REQUEST_PARAM_TXNID];
 		$_parameters[Parameters::REQUEST_PARAM_AMOUNT] = number_format($parameters[Parameters::REQUEST_PARAM_AMOUNT], 2, '.', '');
