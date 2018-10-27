@@ -9,7 +9,7 @@
             "email": "jeffclaud17@gmail.com"
         }
     ],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "require": {
         "mockery/mockery": "^1.2",
         "vlucas/phpdotenv": "^2.5"
@@ -42,5 +42,10 @@
             }
             
         }
-    ]
+    ],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "v3.1.x-dev"
+        }
+    }
 }
