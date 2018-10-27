@@ -1,65 +1,83 @@
 <?php
 require_once('vendor/autoload.php');
 
-use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Dragonpay;
+use Crazymeeks\Foundation\PaymentGateway\Dragonpay;
+use Dotenv\Dotenv;
+$dotenv = new Dotenv(__DIR__);
+$dotenv->load();
 
-## Sample Usage
-/*
-$parameters = array(
-  'merchantid' => 'MERCHANTID',
-  'txnid' => rand(),
-  'amount' => 10,
-  'ccy' => 'PHP',
-  'description' => 'Test',
-  'email' => 'testemail@example.com',
-  'key' => 'YOURKEY',
-);
-$dragonpay = (new Dragonpay($parameters))->away();exit();
-*/
+?>
+<html>
+<form action="" method="POST">
+<input type="submit" name="submit" value="Pay">
+</form>
+<?php
+if ( isset($_POST['submit']) ) {
+    /*$parameters = [
 
-/**
- * If you wish to use credit card for payment
- * You need to call the sendBillingInfo() and
- * pass the required parameters.
- *
- *
- * Please make sure also that you have installed SoapClient.
- * Ubuntu installation: sudo apt-get install php-soap
- * Windows: https://stackoverflow.com/questions/29934167/set-up-php-soap-extension-in-windows 
- *
- * @see Dragonpay's documentation for SendBillingInfo()
- * @link https://www.dragonpay.ph/wp-content/uploads/2014/05/Dragonpay-PS-API
- */
-/*
-$parameters = array(
-  'merchantid' => 'MERCHANTID',
-  'txnid' => rand(),
-  'amount' => 10,
-  'ccy' => 'PHP',
-  'description' => 'Test',
-  'email' => 'testemail@example.com',
-  'key' => 'YOURKEY',
-);
+      'merchantid' => 'MERCHANTID', # Varchar(20) A unique code assigned to Merchant
+      'txnid' => 'TXNID', # Varchar(40) A unique id identifying this specific transaction from the merchant site
+      'amount' => 1, # Numeric(12,2) The amount to get from the end-user (XXXX.XX)
+      'ccy' => 'PHP', # Char(3) The currency of the amount
+      'description' => 'Test', # Varchar(128) A brief description of what the payment is for
+      'email' => 'some@merchant.ph', # Varchar(40) email address of customer
+      'password' => 'PASSWORD', # This will be use to generate a digest key
+      'param1' => 'param1', # Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed
+      'param2' => 'param2', # Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed
 
-$dragonpay = new Dragonpay($parameters);
+    ];
 
-$sendbillinginfo_params = array(
-		 'merchantId' => 'MERCHANTID',
-		 'merchantTxnId' => 'Transaction_number',
-		 'firstName' => 'firstname',
-		 'lastName' => 'lastname',
-		 'address1' => 'address1',
-		 'address2' => 'address2'
-		 'city' => 'your_city',
-		 'state' => 'your_state',
-		 'country' => 'your_country',
-		 'zipCode' => 'your_zipcode',
-		 'telNo' => 'your_telno',
-		 'email' => 'your_valid_email',
-		);
-// check if validation pass with SendBillingInfo()
-if($dragonpay->sendBillingInfo($sendbillinginfo_params)){
+  $parameters['merchantid'] = getenv('MERCHANT_ID');
+  $parameters['password'] = getenv('MERCHANT_KEY');
+  $parameters['txnid'] = 'TXNID-' . rand();
 
-	$dragonpay->away();exit;
+  $dragonpay = new Dragonpay();
+  //$dragonpay->filterPaymentChannel( Dragonpay::OTC_NON_BANK );
+  // With token
+   /*$token = $dragonpay->getToken(
+            $parameters
+   );
+
+  # Using query parameters
+  $dragonpay->setParameters($parameters)->away();
+  exit;*/
+  
+  
+  # Using credit card
+  
+  $parameters = [
+    'merchantid' => 'MERCHANTID', # Varchar(20) A unique code assigned to Merchant
+    'txnid' => 'TXNID', # Varchar(40) A unique id identifying this specific transaction from the merchant site
+    'amount' => 1, # Numeric(12,2) The amount to get from the end-user (XXXX.XX)
+    'ccy' => 'PHP', # Char(3) The currency of the amount
+    'description' => 'Test', # Varchar(128) A brief description of what the payment is for
+    'email' => 'some@merchant.ph', # Varchar(40) email address of customer
+    'password' => 'PASSWORD', # This will be use to generate a digest key
+    'param1' => 'param1', # Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed
+    'param2' => 'param2', # Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed
+
+    'firstName' => 'John',
+    'lastName'  => 'Doe',
+    'address1'  => '#123 Chocolate Hills',
+    'address2'  => 'Sweet Mountain',
+    'city'      => 'Hillside',
+    'state'     => 'Bohol',
+    'country'   => 'PH',
+    'zipCode'   => '1201',
+    'telNo'     => '63 2029',
+  ];
+
+  $test = false;
+  $dragonpay = new Dragonpay( $test );
+
+  $parameters['merchantid'] = getenv('MERCHANT_ID');
+  $parameters['password'] = getenv('MERCHANT_PROD_KEY');
+  $parameters['txnid'] = 'TXNID-' . rand();
+  
+  $dragonpay->useCreditCard($parameters)->getToken($parameters);
+  
+  $dragonpay->away();exit;
 }
-*/
+?>
+</html>
+
