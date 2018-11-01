@@ -1,6 +1,8 @@
 <h1 align="center">
 	<a href="https://www.dragonpay.ph/" target="_blank"><img src="https://www.dragonpay.ph/wp-content/themes/wp365_theme/img/logo_dragonpay.png" alt="Dragonpay"></a>
 	<br>
+	Payment Gateway Library
+	<br>
 	<img src="https://travis-ci.org/crazymeeks/dragonpay.svg?branch=develop">
 	<a href="https://packagist.org/packages/crazymeeks/dragonpay"><img src="https://img.shields.io/packagist/v/crazymeeks/dragonpay.svg" alt="Packgist Latest Version"></a>
 	<a href="https://packagist.org/packages/crazymeeks/dragonpay/stats"><img src="https://img.shields.io/packagist/dt/crazymeeks/dragonpay.svg?colorB=00e500" alt="Packgist Downloads"></a>
