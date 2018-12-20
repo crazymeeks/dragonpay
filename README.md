@@ -1,5 +1,7 @@
 <h1 align="center">
-	<a href="https://www.dragonpay.ph/" target="_blank"><img src="https://www.dragonpay.ph/wp-content/themes/wp365_theme/img/logo_dragonpay.png" alt="Dragonpay"></a>Payment Gateway Library
+	<a href="https://www.dragonpay.ph/" target="_blank"><img src="https://www.dragonpay.ph/wp-content/themes/wp365_theme/img/logo_dragonpay.png" alt="Dragonpay"></a>
+	<br>
+	Payment Gateway Library
 	<br>
 	<img src="https://travis-ci.org/crazymeeks/dragonpay.svg?branch=develop">
 	<a href="https://packagist.org/packages/crazymeeks/dragonpay"><img src="https://img.shields.io/packagist/v/crazymeeks/dragonpay.svg" alt="Packgist Latest Version"></a>
@@ -12,10 +14,9 @@
 </h1>
 
 The Dragonpay payment gateway library in PHP
-
-## A new version has been released. check it [here](https://github.com/crazymeeks/dragonpay/wiki/Dragonpay-3.0)
-### Note: v1.1.4 will not be supported and will deprecate soon. Please use the latest released.
-See the old version [v1.1.4](https://github.com/crazymeeks/dragonpay/wiki) for documentation.
+# Documentation  
+#### [v3.0.0](https://github.com/crazymeeks/dragonpay/wiki/Dragonpay-3.0) - latest/stable released.
+#### [v1.1.4](https://github.com/crazymeeks/dragonpay/wiki) (old/deprecated)
 
 
 ## Author
