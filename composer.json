@@ -3,6 +3,11 @@
     "description": "A PHP library for Dragonpay payment gateway",
     "type": "library",
     "license": "MIT",
+    "keywords": [
+        "Dragonpay library",
+        "Dragonpay PHP library"
+    ],
+    "homepage": "https://github.com/crazymeeks/dragonpay",
     "authors": [
         {
             "name": "jclaud",
