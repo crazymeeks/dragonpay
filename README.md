@@ -13,7 +13,7 @@
 	<a href="https://github.com/crazymeeks/dragonpay/network"><img src="https://img.shields.io/github/forks/crazymeeks/dragonpay.svg?style=social&label=Fork" alt="Fork"></a>
 </h1>
 
-<h3>Features for next release:</h3>
+<h3 style="color: #DF3A01">Features for upcoming release:</h3>
 <ul>
 	<li>Implementation of <strong>Return url</strong></li>
 	<li>Implementation of <strong>Postback url</strong></li>
