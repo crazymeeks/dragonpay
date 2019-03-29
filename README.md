@@ -13,6 +13,12 @@
 	<a href="https://github.com/crazymeeks/dragonpay/network"><img src="https://img.shields.io/github/forks/crazymeeks/dragonpay.svg?style=social&label=Fork" alt="Fork"></a>
 </h1>
 
+<h3>Features for next release:</h3>
+<ul>
+	<li>Implementation of <strong>Return url</strong></li>
+	<li>Implementation of <strong>Postback url</strong></li>
+</ul>
+
 The Dragonpay payment gateway library in PHP
 # Documentation  
 #### [v3.0.0](https://github.com/crazymeeks/dragonpay/wiki/Dragonpay-3.0) - latest/stable released.
