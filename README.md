@@ -14,9 +14,17 @@
 </h1>
 
 <h3 style="color: #DF3A01">Features for upcoming release:</h3>
-<ul>
-	<li>Implementation of <strong>Return url</strong></li>
+<ul>	
 	<li>Implementation of <strong>Postback url</strong></li>
+	<li><strong>Transaction Status Inquiry</strong></li>
+	<li><strong>Cancellation of Transaction</strong></li>
+	<li><strong>Customization of Payment Selection</strong></li>
+	<li><strong>Advanced Control</strong>
+		<ul>
+			<li>Determining Available Payment Channels</li>
+			<li>Creating a Transaction and Retrieving the Instruction</li>
+		</ul>
+	</li>
 </ul>
 
 # Documentation  
