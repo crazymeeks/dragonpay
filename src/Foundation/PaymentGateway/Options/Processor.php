@@ -20,6 +20,20 @@ class Processor
     const GCASH = 'GCSH';
     const CREDIT_CARD = 'CC';
     const PAYPAL = 'PYPL';
+    const BAYADCENTER = 'BAYD';
+    const BITCOIN = 'BITC';
+    const CEBUANA_LHUILLIER = 'CEBL';
+    const CHINA_UNIONPAY = 'CUP';
+    const DRAGONPAY_PREPARED_CREDITS = 'DPAY';
+    const ECPAY = 'ECPY';
+    const LBC = 'LBC';
+    const MLHUILLIER = 'MLH';
+    const ROBINSONS_DEPT_STORE = 'RDS';
+    const SM_PAYMENT_COUNTERS = 'SMR';
+
+
+
+
 
     static $valid_proc_ids = [
         self::GCASH,

@@ -235,13 +235,15 @@ class Parameters
 		}
 
 		if ( $this->dragonpay->token instanceof Token ) {
+			
 			if ( isset($parameters['mode']) ) {
 				$parameters = ['tokenid' => $this->dragonpay->token->getToken(),'mode' => $parameters['mode']];
+			} elseif(isset($parameters['procid'])) {
+				$parameters = ['tokenid' => $this->dragonpay->token->getToken(), 'procid' => $parameters['procid']];
 			} else {
 				$parameters = ['tokenid' => $this->dragonpay->token->getToken()];
 			}
 		}
-		
         return $parameters;
 	}
 	

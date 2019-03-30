@@ -49,5 +49,25 @@ class SoapClientAdapter
         return $result == 0 ? true : false;
         
     }
+
+    /**
+     * Initial Soap
+     *
+     * @param string $resource_url  SOAP webservice url
+     * 
+     * @return \SoapClient
+     */
+    public function initialize($resource_url)
+    {
+        if ( ! \class_exists(\SoapClient::class) ) {
+            throw new \Exception('SoapClient class not found. Please install it.');
+        }
+        $soap_client = new \SoapClient($resource_url . '?wsdl', array(
+            'location' => $resource_url,
+            'trace'    => 1,
+        ));
+
+        return $soap_client;
+    }
     
 }

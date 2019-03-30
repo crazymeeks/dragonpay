@@ -86,7 +86,7 @@ class DragonpayTest extends TestCase
         $token = $dragonpay->getToken(
             $parameters
         );
-
+        
         $this->assertInstanceof(Token::class, $token);
     }
 
@@ -193,11 +193,38 @@ class DragonpayTest extends TestCase
     {
         $dragonpay = new Dragonpay();
 
-        $dragonpay->setPaymentUrl('http://test.example.com/test.aspx' , 'sandbox');
+        // $dragonpay->setPaymentUrl('http://test.example.com/test.aspx' , 'sandbox');
 
-        $this->assertEquals( 'http://test.example.com/test.aspx', $dragonpay->getWebserviceUrl() );
+        // $this->assertEquals( 'http://test.example.com/test.aspx', $dragonpay->getWebserviceUrl() );
         
-        $this->assertEquals('sandbox', $dragonpay->getPaymentMode());
+        // $this->assertEquals('sandbox', $dragonpay->getPaymentMode());
+
+        $url = $dragonpay->setPaymentUrl('http://test.example.com/test.aspx')->getPaymentUrl();
+
+        $this->assertEquals('http://test.example.com/test.aspx', $url);
+
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_set_send_billing_info_url()
+    {
+        $dragonpay = new Dragonpay();
+        $new_billing_info_url = $dragonpay->setBillingInfoUrl('http://test.dragonpay.billinginfo.aspx')
+                                          ->getBillingInfoUrl();
+        $this->assertEquals('http://test.dragonpay.billinginfo.aspx', $new_billing_info_url);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_set_web_service_url()
+    {
+        $dragonpay = new Dragonpay();
+        $url = $dragonpay->setWebServiceUrl('http://test.dragonpay.webservice.aspx')
+                         ->getWebServiceUrl();
+        $this->assertEquals('http://test.dragonpay.webservice.aspx', $url);
     }
 
     /**
@@ -273,16 +300,32 @@ class DragonpayTest extends TestCase
         $parameters['password'] = getenv('MERCHANT_KEY') ? getenv('MERCHANT_KEY') : 'MERCHANT_KEY';
         $parameters['txnid'] = 'TXNID-' . rand();
 
+        
+        $getTokenReturn = new \stdClass();
+        $getTokenReturn->GetTxnTokenResult = 'dp-returned-token';
+
+        $soap_adapter = \Mockery::mock(\Crazymeeks\Foundation\Adapter\SoapClientAdapter::class);
+        $soap_client = \Mockery::mock(\SoapClient::class);
+        
+
+        $soap_adapter->shouldReceive('initialize')
+                    ->with($dragonpay->getWebserviceUrl())
+                    ->andReturn($soap_client);
+
+        $soap_adapter->shouldReceive('GetTxnToken')
+                     ->with($dragonpay->parameters->prepareRequestTokenParameters($parameters))
+                     ->andReturn($getTokenReturn);
+
+
         $token = $dragonpay->useCreditCard($parameters, $verifier, $soap)
-                  ->getToken($parameters);
+                  ->getToken($parameters, $soap_adapter);
         
         $url = $dragonpay->away( true );
-        
         $url = parse_url($url);
         $query_params = explode('=', $url['query']);
         $soap_url = $url['scheme'] . '://' . $url['host'] . $url['path'];
         $this->assertEquals('tokenid', $query_params[0]);
-        $this->assertEquals($soap_url, $dragonpay->getWebserviceUrl());
+        $this->assertEquals($soap_url, $dragonpay->getPaymentUrl());
         $this->assertInstanceof(Token::class, $token);
         
     }
@@ -349,5 +392,104 @@ class DragonpayTest extends TestCase
         $this->assertArrayHasKey('message', $response);
         $this->assertArrayHasKey('digest', $response);
         $this->assertArrayHasKey('description', $response);
+    }
+
+    /**
+     * @test
+     * @dataProvider Tests\DataProviders\DragonpayDataProvider::getAllPaymentChannels()
+     */
+    public function it_should_get_all_available_payment_channels($response)
+    {
+        $dragonpay = new Dragonpay();
+        
+        $parameters['merchantId'] = getenv('MERCHANT_ID') ? getenv('MERCHANT_ID') : 'MERCHANT_ID';
+        $parameters['password'] = getenv('MERCHANT_KEY') ? getenv('MERCHANT_KEY') : 'MERCHANT_KEY';
+        $parameters['amount'] = Dragonpay::ALL_PROCESSORS; // this is optional
+        $soap_adapter = \Mockery::mock(SoapClientAdapter::class);
+        $soap_adapter->shouldReceive('GetAvailableProcessors')
+                     ->with($parameters)
+                     ->andReturn($response);
+
+        $processors = $dragonpay->getPaymentChannels($parameters, $soap_adapter);
+
+        $this->assertObjectHasAttribute('procId', $processors[0]);
+        $this->assertObjectHasAttribute('shortName', $processors[0]);
+        $this->assertObjectHasAttribute('longName', $processors[0]);
+        $this->assertObjectHasAttribute('logo', $processors[0]);
+        $this->assertObjectHasAttribute('currencies', $processors[0]);
+        $this->assertObjectHasAttribute('url', $processors[0]);
+        $this->assertObjectHasAttribute('realTime', $processors[0]);
+        $this->assertObjectHasAttribute('pwd', $processors[0]);
+        $this->assertObjectHasAttribute('defaultBillerId', $processors[0]);
+        $this->assertObjectHasAttribute('hasTxnPwd', $processors[0]);
+        $this->assertObjectHasAttribute('defaultBillerId', $processors[0]);
+        $this->assertObjectHasAttribute('hasManualEnrollment', $processors[0]);
+        $this->assertObjectHasAttribute('type', $processors[0]);
+        $this->assertObjectHasAttribute('status', $processors[0]);
+        $this->assertObjectHasAttribute('remarks', $processors[0]);
+        $this->assertObjectHasAttribute('dayOfWeek', $processors[0]);
+        $this->assertObjectHasAttribute('startTime', $processors[0]);
+        $this->assertObjectHasAttribute('endTime', $processors[0]);
+        $this->assertObjectHasAttribute('minAmount', $processors[0]);
+        $this->assertObjectHasAttribute('maxAmount', $processors[0]);
+        $this->assertObjectHasAttribute('mustRedirect', $processors[0]);
+        $this->assertObjectHasAttribute('surcharge', $processors[0]);
+        $this->assertObjectHasAttribute('hasAltRefNo', $processors[0]);
+        $this->assertObjectHasAttribute('cost', $processors[0]);
+    }
+
+    /**
+     * @test
+     * @dataProvider Tests\DataProviders\DragonpayDataProvider::getAllPaymentChannels()
+     */
+    public function it_should_check_if_payment_channel_is_available_on_days($response)
+    {
+        $dragonpay = new Dragonpay();
+        
+        $parameters['merchantId'] = getenv('MERCHANT_ID') ? getenv('MERCHANT_ID') : 'MERCHANT_ID';
+        $parameters['password'] = getenv('MERCHANT_KEY') ? getenv('MERCHANT_KEY') : 'MERCHANT_KEY';
+        $parameters['amount'] = Dragonpay::ALL_PROCESSORS; // this is optional
+        $soap_adapter = \Mockery::mock(SoapClientAdapter::class);
+        $soap_adapter->shouldReceive('GetAvailableProcessors')
+                     ->with($parameters)
+                     ->andReturn($response);
+
+        $processors = $dragonpay->getPaymentChannels($parameters, $soap_adapter);
+
+        $available_everyday = $dragonpay->channels->everyDay($processors[0]->dayOfWeek);
+        $available_weekdays = $dragonpay->channels->weekDays('0XXXXX0');
+        $available_weekends = $dragonpay->channels->weekEnds('X00000X');
+        $available_sunday_to_friday = $dragonpay->channels->sundayToFriday('XXXXXX0');
+        $available_monday_to_saturday = $dragonpay->channels->mondayToSaturday('0XXXXXX');
+        
+        $this->assertTrue($available_everyday);
+        $this->assertTrue($available_weekdays);
+        $this->assertTrue($available_weekends);
+        $this->assertTrue($available_sunday_to_friday);
+        $this->assertTrue($available_monday_to_saturday);
+    }
+
+    /**
+     * @test
+     * @dataProvider Tests\DataProviders\DragonpayDataProvider::request_parameters()
+     */
+    public function it_redirect_to_specific_payment_using_procid($parameters)
+    {
+        $dragonpay = new Dragonpay();
+
+        $parameters['merchantid'] = getenv('MERCHANT_ID');
+        $parameters['password'] = getenv('MERCHANT_KEY');
+        $parameters['txnid'] = 'TXNID-' . rand();
+        
+        $token = $dragonpay->getToken(
+            $parameters
+        );
+        
+        $url = $dragonpay->withProcid(Processor::BAYADCENTER)->away( true );
+
+        $url_query = parse_url($url, PHP_URL_QUERY);
+
+        $this->assertStringStartsWith('tokenid', $url_query);
+        
     }
 }
