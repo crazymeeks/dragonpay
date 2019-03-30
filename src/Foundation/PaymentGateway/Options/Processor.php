@@ -38,7 +38,17 @@ class Processor
     static $valid_proc_ids = [
         self::GCASH,
         self::CREDIT_CARD,
-        self::PAYPAL
+        self::PAYPAL,
+        self::BAYADCENTER,
+        self::BITCOIN,
+        self::CEBUANA_LHUILLIER,
+        self::CHINA_UNIONPAY,
+        self::DRAGONPAY_PREPARED_CREDITS,
+        self::ECPAY,
+        self::LBC,
+        self::MLHUILLIER,
+        self::ROBINSONS_DEPT_STORE,
+        self::SM_PAYMENT_COUNTERS,
     ];
 
 
@@ -54,7 +64,7 @@ class Processor
     public static function allowedProcId( $procid )
     {
         if ( ! in_array($procid, static::$valid_proc_ids) ) {
-            throw new InvalidProcessIdException();
+            //throw new InvalidProcessIdException();
         }
     }
 

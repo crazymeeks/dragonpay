@@ -145,10 +145,14 @@ class DragonpayTest extends TestCase
     {
         $dragonpay = new Dragonpay();
 
+        $parameters['merchantid'] = getenv('MERCHANT_ID');
+        $parameters['password'] = getenv('MERCHANT_KEY');
+        $parameters['txnid'] = 'TXNID-' . rand();
+
         $dragonpay->setParameters(
             $parameters
         );
-        $dragonpay->filterPaymentChannel( Dragonpay::ONLINE_BANK );
+        $dragonpay->filterPaymentChannel(Dragonpay::ONLINE_BANK);
         $url = $dragonpay->away( true );
         
         $url = parse_url($url);
@@ -471,11 +475,22 @@ class DragonpayTest extends TestCase
 
     /**
      * @test
-     * @dataProvider Tests\DataProviders\DragonpayDataProvider::request_parameters()
+     * @dataProvider Tests\DataProviders\DragonpayDataProvider::getAllPaymentChannels()
      */
-    public function it_redirect_to_specific_payment_using_procid($parameters)
+    public function it_redirect_to_specific_payment_using_procid_and_token($response, $parameters)
     {
+
         $dragonpay = new Dragonpay();
+        
+        $params['merchantId'] = getenv('MERCHANT_ID') ? getenv('MERCHANT_ID') : 'MERCHANT_ID';
+        $params['password'] = getenv('MERCHANT_KEY') ? getenv('MERCHANT_KEY') : 'MERCHANT_KEY';
+        $params['amount'] = Dragonpay::ALL_PROCESSORS; // this is optional
+        $soap_adapter = \Mockery::mock(SoapClientAdapter::class);
+        $soap_adapter->shouldReceive('GetAvailableProcessors')
+                     ->with($params)
+                     ->andReturn($response);
+
+        $processors = $dragonpay->getPaymentChannels($params, $soap_adapter);
 
         $parameters['merchantid'] = getenv('MERCHANT_ID');
         $parameters['password'] = getenv('MERCHANT_KEY');
@@ -485,11 +500,8 @@ class DragonpayTest extends TestCase
             $parameters
         );
         
-        $url = $dragonpay->withProcid(Processor::BAYADCENTER)->away( true );
-
+        $url = $dragonpay->withProcid($processors[0]->procId)->away( true );
         $url_query = parse_url($url, PHP_URL_QUERY);
-
         $this->assertStringStartsWith('tokenid', $url_query);
-        
     }
 }
