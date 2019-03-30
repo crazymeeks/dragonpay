@@ -312,10 +312,42 @@ class DragonpayTest extends TestCase
                   ->withProcid('dfd');
     }
 
-
-    public function tearDown()
+    /**
+     * @test
+     * @dataProvider Tests\DataProviders\DragonpayDataProvider::postback()
+     */
+    public function it_should_handle_postback_with_closure_as_parameter($parameters)
     {
-        \Mockery::close();
-        parent::tearDown();
+        $_POST = $parameters;
+
+        $dragonpay = new Dragonpay();
+
+        $dragonpay->handlePostback(function($data){
+            $this->assertArrayHasKey('txnid', $data);
+            $this->assertArrayHasKey('refno', $data);
+            $this->assertArrayHasKey('status', $data);
+            $this->assertArrayHasKey('message', $data);
+            $this->assertArrayHasKey('digest', $data);
+            $this->assertArrayHasKey('description', $data);
+        });
+    }
+
+    /**
+     * @test
+     * @dataProvider Tests\DataProviders\DragonpayDataProvider::postback()
+     */
+    public function it_should_handle_postback_where_parameter_class_implements_postback_handler_interface($parameters)
+    {
+        $_POST = $parameters;
+
+        $dragonpay = new Dragonpay();
+        $my_post_backhandler_class = new \Tests\Classes\PostbackHandler();
+        $response = $dragonpay->handlePostback($my_post_backhandler_class);
+        $this->assertArrayHasKey('txnid', $response);
+        $this->assertArrayHasKey('refno', $response);
+        $this->assertArrayHasKey('status', $response);
+        $this->assertArrayHasKey('message', $response);
+        $this->assertArrayHasKey('digest', $response);
+        $this->assertArrayHasKey('description', $response);
     }
 }

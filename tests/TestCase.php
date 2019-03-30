@@ -15,4 +15,10 @@ class TestCase extends PHPUnitTestCase
         $dotenv->load();
     }
 
+    public function tearDown()
+    {
+        \Mockery::close();
+        parent::tearDown();
+    }
+
 }

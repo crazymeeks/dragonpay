@@ -67,4 +67,25 @@ class DragonpayDataProvider
         ];
     }
 
+    /**
+     * Data pass by Dragonpay when the application's postback api
+     * invoked by Dragonpay
+     *
+     * @return array
+     */
+    public function postback()
+    {
+        $_POST = [
+            'txnid' => 'SOMERANDOMID',
+            'refno' => 'SOMERANDOMREFNO',
+            'status' => 'S',
+            'message' => 'SOMERANDOMMESSAGE',
+            'digest'  => 'THEENCRYPTEDDIGEST',
+        ];
+
+        return [
+            array($_POST)
+        ];
+    }
+
 }

@@ -19,6 +19,8 @@ use Crazymeeks\Foundation\Exceptions\PaymentException;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Token;
 use Crazymeeks\Foundation\PaymentGateway\Options\Processor;
 use Crazymeeks\Foundation\PaymentGateway\BillingInfoVerifier;
+use Crazymeeks\Foundation\Exceptions\InvalidPostbackInvokerException;
+use Crazymeeks\Foundation\PaymentGateway\Handler\PostbackHandlerInterface;
 use Crazymeeks\Contracts\Foundation\PaymentGateway\PaymentGatewayInterface;
 
 class Dragonpay implements PaymentGatewayInterface
@@ -60,6 +62,39 @@ class Dragonpay implements PaymentGatewayInterface
         self::INVALID_MERCHANT_PASSWORD => 'Invalid merchant password',
     ];
 
+    const SUCCESS = 'S';
+    const FAILED = 'F';
+    const PENDING = 'P';
+    const UKNOWN = 'U';
+    const REFUND = 'R';
+    const CHARGEBACK = 'K';
+    const VOID = 'V';
+    const AUTHORIZED = 'A';
+
+    const STATUS = [
+        self::SUCCESS => 'Success',
+        self::FAILED  => 'Failure',
+        self::PENDING => 'Pending',
+        self::UKNOWN => 'Unknown',
+        self::REFUND => 'Refund',
+        self::CHARGEBACK => 'Chargeback',
+        self::VOID => 'Void',
+        self::AUTHORIZED => 'Authorized',
+    ];
+
+    /**
+     * Payment Channels
+     * 
+     * @var int
+     */
+    const ONLINE_BANK  = 1;
+    const OTC_BANK     = 2;
+    const OTC_NON_BANK = 4;
+    const PAYPAL       = 32;
+    const CREDIT_CARD  = 64;
+    const GCASH        = 128;
+    const INTL_OTC     = 256;
+
 
 	/**
 	 * DragonPay sandbox url
@@ -75,18 +110,7 @@ class Dragonpay implements PaymentGatewayInterface
 	 */
     protected $production_url = 'https://gw.dragonpay.ph/Pay.aspx';
     
-    /**
-     * Payment Channels
-     * 
-     * @var int
-     */
-    const ONLINE_BANK  = 1;
-    const OTC_BANK     = 2;
-    const OTC_NON_BANK = 4;
-    const PAYPAL       = 32;
-    const CREDIT_CARD  = 64;
-    const GCASH        = 128;
-    const INTL_OTC     = 256;
+    
 
 	/**
 	 * Dragon pay send billing info url. As of the development of this
@@ -501,6 +525,52 @@ class Dragonpay implements PaymentGatewayInterface
 
         header("Location: " . $this->getUrl() . '?' . $this->parameters->query(), 302);exit();
 
+    }
+
+    /**
+     * Postback handler
+     * 
+     * @param Crazymeeks\Foundation\PaymentGateway\Handler\PostbackHandlerInterface|\Closure $callback
+     * 
+     * @return mixed
+     */
+    public function handlePostback($callback)
+    {
+
+        if (isset($_POST['status'])) {
+            $description = $this->getStatusDescription($_POST['status']);
+            $data = $_POST;
+            $data['description'] = $description;
+            if ($callback instanceof \Closure) {
+                return call_user_func_array($callback, [$data]);
+            }
+
+            if ($callback instanceof PostbackHandlerInterface) {
+                return call_user_func_array(array($callback, 'handle'), [$data]);
+            }
+        }
+        
+
+        
+    }
+
+
+    /**
+     * Create postback response
+     *
+     * @param string $status
+     * 
+     * @return string
+     * 
+     * @throws Crazymeeks\Foundation\Exceptions\InvalidPostbackInvokerException
+     * 
+     */
+    private function getStatusDescription($status)
+    {
+        if (isset(self::STATUS[$status])) {
+            return self::STATUS[$status];
+        }
+        throw new InvalidPostbackInvokerException();
     }
 
 }
