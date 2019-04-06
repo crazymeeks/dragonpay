@@ -170,14 +170,14 @@ class Dragonpay implements PaymentGatewayInterface
 	/**
 	 * Request Body parameters ($_POST)
 	 *
-	 * @var Crazymeeks\Foundation\PaymentGateway\RequestBag
+	 * @var \Crazymeeks\Foundation\PaymentGateway\RequestBag
 	 */
     public $request;
     
     /**
      * The parameters
      * 
-     * @var Crazymeeks\Foundation\PaymentGateway\Parameters
+     * @var \Crazymeeks\Foundation\PaymentGateway\Parameters
      *
      */
     public $parameters;
@@ -218,12 +218,12 @@ class Dragonpay implements PaymentGatewayInterface
     private $debug_message;
 
     /**
-     * @var Crazymeeks\Foundation\PaymentGateway\Dragonpay\PaymentChannels
+     * @var \Crazymeeks\Foundation\PaymentGateway\Dragonpay\PaymentChannels
      */
     public $channels;
 
     /**
-     * @var Ixudra\Curl\CurlService
+     * @var \Ixudra\Curl\CurlService
      */
     private $curl;
 
