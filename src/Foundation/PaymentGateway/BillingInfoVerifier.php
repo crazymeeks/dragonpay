@@ -16,7 +16,7 @@ class BillingInfoVerifier
      *
      * @return void
      */
-    public function send( SoapClientAdapter $soap, $url )
+    public function send(SoapClientAdapter $soap, $url)
     {
        
         return $soap->setParameters($this->parameters->billing_info())
@@ -36,7 +36,7 @@ class BillingInfoVerifier
      * 
      * @return void
      */
-    public function setParameterObject( Parameters $parameter )
+    public function setParameterObject(Parameters $parameter)
     {
         $this->parameters = $parameter;
     }

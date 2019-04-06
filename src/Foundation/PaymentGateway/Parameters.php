@@ -86,7 +86,7 @@ class Parameters
 	 * 
 	 * @param Crazymeeks\Foundation\PaymentGateway\Dragonpay
 	 */
-	public function __construct( Dragonpay $dragonpay )
+	public function __construct(Dragonpay $dragonpay)
 	{
 		$this->dragonpay = $dragonpay;
 	}
@@ -98,9 +98,9 @@ class Parameters
 	 * 
 	 * @return array
 	 */
-	public function setRequestParameters( array $parameters )
+	public function setRequestParameters(array $parameters)
 	{
-		$parameters = array_filter($parameters);
+		$parameters = array_merge($this->parameters, array_filter($parameters));
 
 		if ( ! array_key_exists('merchantid', $parameters)
 			&& ! array_key_exists('txnid', $parameters)
@@ -119,7 +119,7 @@ class Parameters
 		$_parameters[Parameters::REQUEST_PARAM_EMAIL] = $parameters[Parameters::REQUEST_PARAM_EMAIL];
 		$_parameters['password'] = $parameters['password'];
 		
-		$_parameters = array_filter( $_parameters );
+		$_parameters = array_filter($_parameters);
 		
 		$_parameters['digest'] = $this->createDigest($_parameters);
 		
@@ -130,7 +130,7 @@ class Parameters
 		return $this->parameters = array_filter( $_parameters );
 	}
 
-	private function createDigest( array $parameters )
+	private function createDigest(array $parameters)
 	{	
 		$digest = sha1(implode(':', $parameters));
 
@@ -145,8 +145,10 @@ class Parameters
 	 *
 	 * @return array
 	 */
-	public function prepareRequestTokenParameters( array $parameters )
+	public function prepareRequestTokenParameters(array $parameters)
 	{
+		$parameters = array_merge($this->parameters, $parameters);
+		
 		$_parameters[Parameters::REQUEST_TOKEN_PARAM_MERCHANT_ID] = $parameters[Parameters::REQUEST_PARAM_MERCHANT_ID];
 		$_parameters[Parameters::REQUEST_TOKEN_PARAM_PASSWORD] = $parameters[Parameters::REQUEST_PARAM_PASSWORD];
 		$_parameters[Parameters::REQUEST_TOKEN_PARAM_MERCHANT_TXNID] = $parameters[Parameters::REQUEST_PARAM_TXNID];
@@ -157,7 +159,7 @@ class Parameters
 		$_parameters[Parameters::REQUEST_TOKEN_PARAM_PARAM1] = isset($parameters[Parameters::REQUEST_PARAM_PARAM1]) ? $parameters[Parameters::REQUEST_PARAM_PARAM1] : '';
 		$_parameters[Parameters::REQUEST_TOKEN_PARAM_PARAM2] = isset($parameters[Parameters::REQUEST_PARAM_PARAM2]) ? $parameters[Parameters::REQUEST_PARAM_PARAM2] : '';
 
-		$_parameters = array_filter( $_parameters );
+		$_parameters = array_filter($_parameters);
 
 		return $this->parameters = $_parameters;
 
@@ -172,20 +174,20 @@ class Parameters
 	 * 
 	 * @throws InvalidArrayParameterException
 	 */
-	public function setBillingInfoParameters( array $parameters )
+	public function setBillingInfoParameters(array $parameters)
 	{
 
-		if ( ! array_key_exists('merchantid', $parameters)
-			&& ! array_key_exists('txnid', $parameters)
-			&& ! array_key_exists('firstName', $parameters)
-			&& ! array_key_exists('lastName', $parameters)
-			&& ! array_key_exists('address1', $parameters)
-			&& ! array_key_exists('address2', $parameters)
-			&& ! array_key_exists('city', $parameters)
-			&& ! array_key_exists('state', $parameters)
-			&& ! array_key_exists('country', $parameters)
-			&& ! array_key_exists('telNo', $parameters)
-			&& ! array_key_exists('email', $parameters) ) {
+		if (!array_key_exists('merchantid', $parameters)
+			&& !array_key_exists('txnid', $parameters)
+			&& !array_key_exists('firstName', $parameters)
+			&& !array_key_exists('lastName', $parameters)
+			&& !array_key_exists('address1', $parameters)
+			&& !array_key_exists('address2', $parameters)
+			&& !array_key_exists('city', $parameters)
+			&& !array_key_exists('state', $parameters)
+			&& !array_key_exists('country', $parameters)
+			&& !array_key_exists('telNo', $parameters)
+			&& !array_key_exists('email', $parameters)) {
 
 				throw InvalidArrayParameterException::send_billing_info_parameters();
 		}
@@ -213,7 +215,7 @@ class Parameters
 	 * 
 	 * @return void
 	 */
-	public function add( array $parameters )
+	public function add(array $parameters)
 	{
 		$this->parameters =  array_merge($this->parameters, (array) $parameters);
 	}
@@ -230,13 +232,13 @@ class Parameters
 		/**
 		 * Set payment mode if specified
 		 */
-		if ( ! is_null( $this->dragonpay->getPaymentChannel() ) ) {
+		if (!is_null($this->dragonpay->getPaymentChannel())) {
 			$parameters['mode'] = $this->dragonpay->getPaymentChannel();
 		}
 
-		if ( $this->dragonpay->token instanceof Token ) {
+		if ($this->dragonpay->token instanceof Token) {
 			
-			if ( isset($parameters['mode']) ) {
+			if (isset($parameters['mode'])) {
 				$parameters = ['tokenid' => $this->dragonpay->token->getToken(),'mode' => $parameters['mode']];
 			} elseif(isset($parameters['procid'])) {
 				$parameters = ['tokenid' => $this->dragonpay->token->getToken(), 'procid' => $parameters['procid']];

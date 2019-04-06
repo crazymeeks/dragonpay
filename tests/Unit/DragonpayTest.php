@@ -10,30 +10,46 @@ use Crazymeeks\Foundation\PaymentGateway\Options\Processor;
 
 use Crazymeeks\Foundation\Adapter\SoapClientAdapter;
 use Crazymeeks\Foundation\PaymentGateway\BillingInfoVerifier;
+use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\CancelTransaction;
+use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\CheckTransactionStatus;
 
 class DragonpayTest extends TestCase
 {
 
+    private $merchant_account;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->merchant_account = [
+            'merchantid' => !is_null(getenv('MERCHANT_ID')) ? getenv('MERCHANT_ID') : 'MERCHANTID' ,
+            'password' => !is_null(getenv('MERCHANT_KEY')) ? getenv('MERCHANT_KEY') : 'PASSWORD',
+        ];
+    }
+
     /**
      * @test
      * @dataProvider Tests\DataProviders\DragonpayDataProvider::request_parameters()
+     * @group positive
      */
-    public function it_should_create_request_parameters( $parameters )
+    public function it_should_create_request_parameters($parameters)
     {
-        $dragonpay = new Dragonpay();
+
+        $dragonpay = new Dragonpay($this->merchant_account);
 
         $dragonpay->setParameters(
             $parameters
         );
-
+        
         $this->assertSame($dragonpay->parameters->get(), [
-            'merchantid' => 'MERCHANTID', # Varchar(20) A unique code assigned to Merchant
+            'merchantid' => $this->merchant_account['merchantid'], # Varchar(20) A unique code assigned to Merchant
             'txnid' => 'TXNID', # Varchar(40) A unique id identifying this specific transaction from the merchant site
             'amount' => number_format(1, 2, '.', ''), # Numeric(12,2) The amount to get from the end-user (XXXX.XX)
             'ccy' => 'PHP', # Char(3) The currency of the amount
             'description' => 'Test', # Varchar(128) A brief description of what the payment is for
             'email' => 'some@merchant.ph', # Varchar(40) email address of customer
-            'digest' => sha1('MERCHANTID:TXNID:1.00:PHP:Test:some@merchant.ph:PASSWORD'), # This will be use to generate a digest key
+            'digest' => sha1($this->merchant_account['merchantid'] .':TXNID:1.00:PHP:Test:some@merchant.ph:' . $this->merchant_account['password']), # This will be use to generate a digest key
             'param1' => 'param1', # Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed
             'param2' => 'param2', # Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed
         ]);
@@ -43,24 +59,25 @@ class DragonpayTest extends TestCase
     /**
      * @test
      * @dataProvider Tests\DataProviders\DragonpayDataProvider::request_parameters()
+     * @group positive
      */
-    public function it_should_create_query_string_from_parameters( $parameters )
+    public function it_should_create_query_string_from_parameters($parameters)
     {
 
-        $dragonpay = new Dragonpay();
+        $dragonpay = new Dragonpay($this->merchant_account);
 
         $dragonpay->setParameters(
             $parameters
         );
 
         $expected =  http_build_query([
-            'merchantid' => 'MERCHANTID', # Varchar(20) A unique code assigned to Merchant
+            'merchantid' => $this->merchant_account['merchantid'], # Varchar(20) A unique code assigned to Merchant
             'txnid' => 'TXNID', # Varchar(40) A unique id identifying this specific transaction from the merchant site
             'amount' => number_format(1, 2, '.', ''), # Numeric(12,2) The amount to get from the end-user (XXXX.XX)
             'ccy' => 'PHP', # Char(3) The currency of the amount
             'description' => 'Test', # Varchar(128) A brief description of what the payment is for
             'email' => 'some@merchant.ph', # Varchar(40) email address of customer
-            'digest' => sha1('MERCHANTID:TXNID:1.00:PHP:Test:some@merchant.ph:PASSWORD'), # This will be use to generate a digest key
+            'digest' => sha1($this->merchant_account['merchantid'] . ':TXNID:1.00:PHP:Test:some@merchant.ph:' . $this->merchant_account['password']), # This will be use to generate a digest key
             'param1' => 'param1', # Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed
             'param2' => 'param2', # Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed, '', '&'
         ], '', '&');
@@ -74,13 +91,12 @@ class DragonpayTest extends TestCase
      * 
      * @test
      * @dataProvider Tests\DataProviders\DragonpayDataProvider::request_parameters()
+     * @group positive
      */
-    public function it_should_set_request_token_parameters( $parameters )
+    public function it_should_set_request_token_parameters($parameters)
     {
-        $dragonpay = new Dragonpay();
+        $dragonpay = new Dragonpay($this->merchant_account);
 
-        $parameters['merchantid'] = getenv('MERCHANT_ID');
-        $parameters['password'] = getenv('MERCHANT_KEY');
         $parameters['txnid'] = 'TXNID-' . rand();
         
         $token = $dragonpay->getToken(
@@ -93,13 +109,13 @@ class DragonpayTest extends TestCase
     /**
      * @test
      * @dataProvider Tests\DataProviders\DragonpayDataProvider::request_parameters()
+     * @expectedException Crazymeeks\Foundation\Exceptions\PaymentException
+     * @group negative
      */
-    public function it_should_throw_payment_exception_if_dragonpay_returns_error( $parameters )
+    public function it_should_throw_payment_exception_if_dragonpay_returns_error($parameters)
     {
-        $this->expectException( PaymentException::class );
-
-        $dragonpay = new Dragonpay();
-
+        $dragonpay = new Dragonpay($this->merchant_account);
+        $parameters['merchantid'] = 'invalidmerchantid';
         $token = $dragonpay->getToken(
             $parameters
         );
@@ -109,11 +125,12 @@ class DragonpayTest extends TestCase
    /**
     * @test
     * @dataProvider Tests\DataProviders\DragonpayDataProvider::request_parameters()
+    * @group positive
     */
-    public function it_should_see_error( $parameters )
+    public function it_should_see_error($parameters)
     {
 
-        $dragonpay = new Dragonpay();
+        $dragonpay = new Dragonpay($this->merchant_account);
         try{
             $token = $dragonpay->getToken(
                 $parameters
@@ -121,18 +138,18 @@ class DragonpayTest extends TestCase
         }catch( PaymentException $e ){
             $this->assertEquals( $e->getMessage(), $dragonpay->seeError() );
         }
-        
     }
     
     /**
      * @test
      * @dataProvider Tests\DataProviders\DragonpayDataProvider::request_parameters()
+     * @group positive
      */
-    public function it_should_set_payment_channel( $parameters )
+    public function it_should_set_payment_channel($parameters)
     {
-        $dragonpay = new Dragonpay();
+        $dragonpay = new Dragonpay($this->merchant_account);
 
-        $dragonpay->filterPaymentChannel( Dragonpay::CREDIT_CARD );
+        $dragonpay->filterPaymentChannel(Dragonpay::CREDIT_CARD);
 
         $this->assertEquals(64, $dragonpay->getPaymentChannel());
     }
@@ -140,13 +157,12 @@ class DragonpayTest extends TestCase
     /**
      * @test
      * @dataProvider Tests\DataProviders\DragonpayDataProvider::request_parameters()
+     * @group positive
      */
-    public function it_should_redirect_to_dragonpay_portal_when_parameters_set_are_valid( $parameters )
+    public function it_should_redirect_to_dragonpay_portal_when_parameters_set_are_valid($parameters)
     {
-        $dragonpay = new Dragonpay();
+        $dragonpay = new Dragonpay($this->merchant_account);
 
-        $parameters['merchantid'] = getenv('MERCHANT_ID');
-        $parameters['password'] = getenv('MERCHANT_KEY');
         $parameters['txnid'] = 'TXNID-' . rand();
 
         $dragonpay->setParameters(
@@ -168,13 +184,12 @@ class DragonpayTest extends TestCase
     /**
      * @test
      * @dataProvider Tests\DataProviders\DragonpayDataProvider::request_parameters()
+     * @group positive
      */
-    public function it_should_redirect_to_dragonpay_when_request_token_is_valid( $parameters )
+    public function it_should_redirect_to_dragonpay_when_request_token_is_valid($parameters)
     {
-        $dragonpay = new Dragonpay();
+        $dragonpay = new Dragonpay($this->merchant_account);
 
-        $parameters['merchantid'] = getenv('MERCHANT_ID');
-        $parameters['password'] = getenv('MERCHANT_KEY');
         $parameters['txnid'] = 'TXNID-' . rand();
         
         $token = $dragonpay->getToken(
@@ -192,16 +207,11 @@ class DragonpayTest extends TestCase
 
     /**
      * @test
+     * @group positive
      */
     public function it_should_set_payment_url()
     {
-        $dragonpay = new Dragonpay();
-
-        // $dragonpay->setPaymentUrl('http://test.example.com/test.aspx' , 'sandbox');
-
-        // $this->assertEquals( 'http://test.example.com/test.aspx', $dragonpay->getWebserviceUrl() );
-        
-        // $this->assertEquals('sandbox', $dragonpay->getPaymentMode());
+        $dragonpay = new Dragonpay($this->merchant_account);
 
         $url = $dragonpay->setPaymentUrl('http://test.example.com/test.aspx')->getPaymentUrl();
 
@@ -211,10 +221,11 @@ class DragonpayTest extends TestCase
 
     /**
      * @test
+     * @group positive
      */
     public function it_should_set_send_billing_info_url()
     {
-        $dragonpay = new Dragonpay();
+        $dragonpay = new Dragonpay($this->merchant_account);
         $new_billing_info_url = $dragonpay->setBillingInfoUrl('http://test.dragonpay.billinginfo.aspx')
                                           ->getBillingInfoUrl();
         $this->assertEquals('http://test.dragonpay.billinginfo.aspx', $new_billing_info_url);
@@ -222,10 +233,11 @@ class DragonpayTest extends TestCase
 
     /**
      * @test
+     * @group positive
      */
     public function it_should_set_web_service_url()
     {
-        $dragonpay = new Dragonpay();
+        $dragonpay = new Dragonpay($this->merchant_account);
         $url = $dragonpay->setWebServiceUrl('http://test.dragonpay.webservice.aspx')
                          ->getWebServiceUrl();
         $this->assertEquals('http://test.dragonpay.webservice.aspx', $url);
@@ -234,10 +246,11 @@ class DragonpayTest extends TestCase
     /**
      * @test
      * @dataProvider Tests\DataProviders\DragonpayDataProvider::billing_info()
+     * @group positive
      */
-    public function it_should_pay_using_credit_card_with_using_query_parameters( $parameters )
+    public function it_should_pay_using_credit_card_with_using_query_parameters($parameters)
     {
-        $dragonpay = new Dragonpay();
+        $dragonpay = new Dragonpay($this->merchant_account);
 
         $verifier = \Mockery::mock(BillingInfoVerifier::class);
         $soap = \Mockery::mock(SoapClientAdapter::class);
@@ -277,10 +290,11 @@ class DragonpayTest extends TestCase
     /**
      * @test
      * @dataProvider Tests\DataProviders\DragonpayDataProvider::billing_info()
+     * @group positive
      */
-    public function it_should_pay_using_credit_card_with_requested_token( $parameters )
+    public function it_should_pay_using_credit_card_with_requested_token($parameters)
     {
-        $dragonpay = new Dragonpay();
+        $dragonpay = new Dragonpay($this->merchant_account);
 
         $verifier = \Mockery::mock(BillingInfoVerifier::class);
         $soap = \Mockery::mock(SoapClientAdapter::class);
@@ -337,11 +351,12 @@ class DragonpayTest extends TestCase
     /**
      * @test
      * @dataProvider Tests\DataProviders\DragonpayDataProvider::request_parameters()
+     * @group positive
      */
-    public function it_should_set_procid_in_the_parameters( $parameters )
+    public function it_should_set_procid_in_the_parameters($parameters)
     {
         
-        $dragonpay = new Dragonpay();
+        $dragonpay = new Dragonpay($this->merchant_account);
         $dragonpay->setParameters($parameters)
                   ->withProcid(Processor::CREDIT_CARD);
         $this->assertArrayHasKey('procid', $dragonpay->parameters->get());
@@ -349,25 +364,14 @@ class DragonpayTest extends TestCase
 
     /**
      * @test
-     * @dataProvider Tests\DataProviders\DragonpayDataProvider::request_parameters()
-     * @expectedException Crazymeeks\Foundation\Exceptions\InvalidProcessIdException
-     */
-    public function it_should_throw_exception_if_process_id_is_not_in_the_list( $parameters )
-    {
-        $dragonpay = new Dragonpay();
-        $dragonpay->setParameters($parameters)
-                  ->withProcid('dfd');
-    }
-
-    /**
-     * @test
      * @dataProvider Tests\DataProviders\DragonpayDataProvider::postback()
+     * @group positive
      */
     public function it_should_handle_postback_with_closure_as_parameter($parameters)
     {
         $_POST = $parameters;
 
-        $dragonpay = new Dragonpay();
+        $dragonpay = new Dragonpay($this->merchant_account);
 
         $dragonpay->handlePostback(function($data){
             $this->assertArrayHasKey('txnid', $data);
@@ -382,12 +386,13 @@ class DragonpayTest extends TestCase
     /**
      * @test
      * @dataProvider Tests\DataProviders\DragonpayDataProvider::postback()
+     * @group positive
      */
     public function it_should_handle_postback_where_parameter_class_implements_postback_handler_interface($parameters)
     {
         $_POST = $parameters;
 
-        $dragonpay = new Dragonpay();
+        $dragonpay = new Dragonpay($this->merchant_account);
         $my_post_backhandler_class = new \Tests\Classes\PostbackHandler();
         $response = $dragonpay->handlePostback($my_post_backhandler_class);
         $this->assertArrayHasKey('txnid', $response);
@@ -399,22 +404,20 @@ class DragonpayTest extends TestCase
     }
 
     /**
+     * GetAvailableProcessors()
      * @test
      * @dataProvider Tests\DataProviders\DragonpayDataProvider::getAllPaymentChannels()
+     * @group positive
      */
     public function it_should_get_all_available_payment_channels($response)
     {
-        $dragonpay = new Dragonpay();
-        
-        $parameters['merchantId'] = getenv('MERCHANT_ID') ? getenv('MERCHANT_ID') : 'MERCHANT_ID';
-        $parameters['password'] = getenv('MERCHANT_KEY') ? getenv('MERCHANT_KEY') : 'MERCHANT_KEY';
-        $parameters['amount'] = Dragonpay::ALL_PROCESSORS; // this is optional
+        $dragonpay = new Dragonpay($this->merchant_account);
         $soap_adapter = \Mockery::mock(SoapClientAdapter::class);
         $soap_adapter->shouldReceive('GetAvailableProcessors')
-                     ->with($parameters)
+                     ->with(\Mockery::any())
                      ->andReturn($response);
 
-        $processors = $dragonpay->getPaymentChannels($parameters, $soap_adapter);
+        $processors = $dragonpay->getPaymentChannels(Dragonpay::ALL_PROCESSORS, $soap_adapter);
 
         $this->assertObjectHasAttribute('procId', $processors[0]);
         $this->assertObjectHasAttribute('shortName', $processors[0]);
@@ -443,22 +446,171 @@ class DragonpayTest extends TestCase
     }
 
     /**
+     * Instead of redirecting user's browser to DP,
+     * merchant can perform background HTTP GET and
+     * retrieve the instructions programmatically as
+     * JSON for customized displaying.
+     *
+     * test
+     * dataProvider Tests\DataProviders\DragonpayDataProvider::getAllPaymentChannels()
+     */
+    public function it_should_retrieve_instruction_using_background_process_to_customize_checkout_page($response, $parameters)
+    {
+        
+        echo '@todo:: ' . __METHOD__;
+        $this->assertTrue(true);
+        /*$dragonpay = new Dragonpay();
+        
+        $options['merchantId'] = getenv('MERCHANT_ID') ? getenv('MERCHANT_ID') : 'MERCHANT_ID';
+        $options['password'] = getenv('MERCHANT_KEY') ? getenv('MERCHANT_KEY') : 'MERCHANT_KEY';
+        $options['amount'] = Dragonpay::ALL_PROCESSORS; // this is optional
+
+        $parameters['merchantid'] = $options['merchantId'];
+        $parameters['password'] = $options['password'];
+        $parameters['txnid'] = uniqid();
+
+        $soap_adapter = \Mockery::mock(SoapClientAdapter::class);
+        $soap_adapter->shouldReceive('GetAvailableProcessors')
+                     ->with($options)
+                     ->andReturn($response);
+
+        $processors = $dragonpay->setParameters($parameters)->getPaymentChannels($options, $soap_adapter);
+        
+        $payment_instruction = $dragonpay->silent([
+            'procid' => $processors[0]->procId,
+            'mustRedirect' => $processors[0]->mustRedirect,
+            'testing'      => true,
+        ]);*/
+
+        // $obj = new \stdClass();
+        // $obj->procid = 'BDO';
+        // $obj->mustRedirect = true;
+
+        // $payment_instruction = $dragonpay->silent($obj);
+
+    }
+
+    /**
+     * @test
+     * @group positive
+     */
+    public function it_should_cancel_transaction()
+    {
+        $dragonpay = new Dragonpay($this->merchant_account);
+
+        $transactionid = 'TXNID-1735646342';
+
+        $cancel_parameters = [
+            'merchantId' => $this->merchant_account['merchantid'],
+            'merchantPwd' => $this->merchant_account['password'],
+            'txnId'       => $transactionid,
+        ];
+
+        $cancel_return = new \stdClass();
+        $cancel_return->CancelTransactionResult = 0;
+
+        $soap = \Mockery::mock(\SoapClient::class);
+        $soap->shouldReceive('CancelTransaction')
+             ->with($cancel_parameters)
+             ->andReturn($cancel_return);
+
+        $soap_adapter = \Mockery::mock(SoapClientAdapter::class);
+
+        $soap_adapter->shouldReceive('initialize')
+                     ->with($dragonpay->getWebserviceUrl())
+                     ->andReturn($soap);
+
+        $is_cancelled = $dragonpay->action(new CancelTransaction($transactionid), $soap_adapter);
+
+        $this->assertTrue($is_cancelled);
+
+    }
+
+    /**
+     * @test
+     * @expectedException Crazymeeks\Foundation\Exceptions\Action\CancelTransactionException
+     * @group negative
+     */
+    public function it_throws_when_cancel_transaction_failed()
+    {
+        $dragonpay = new Dragonpay($this->merchant_account);
+
+        $transactionid = 'TXNID-1735646342';
+
+        $cancel_parameters = [
+            'merchantId' => $this->merchant_account['merchantid'],
+            'merchantPwd' => $this->merchant_account['password'],
+            'txnId'       => $transactionid,
+        ];
+
+        $cancel_return = new \stdClass();
+        $cancel_return->CancelTransactionResult = -1;
+
+        $soap = \Mockery::mock(\SoapClient::class);
+        $soap->shouldReceive('CancelTransaction')
+             ->with($cancel_parameters)
+             ->andReturn($cancel_return);
+
+        $soap_adapter = \Mockery::mock(SoapClientAdapter::class);
+
+        $soap_adapter->shouldReceive('initialize')
+                     ->with($dragonpay->getWebserviceUrl())
+                     ->andReturn($soap);
+
+        $dragonpay->action(new CancelTransaction($transactionid), $soap_adapter);
+
+    }
+
+    /**
+     * @test
+     * @group positive
+     */
+    public function it_should_get_transaction_status()
+    {
+        $dragonpay = new Dragonpay($this->merchant_account);
+
+        $transactionid = 'TXNID-1735646342';
+
+        $parameter = [
+            'merchantId' => $this->merchant_account['merchantid'],
+            'merchantPwd' => $this->merchant_account['password'],
+            'txnId'       => $transactionid,
+        ];
+
+        $status_return = new \stdClass();
+        $status_return->GetTxnStatusResult = 'U';
+
+        $soap = \Mockery::mock(\SoapClient::class);
+        $soap->shouldReceive('GetTxnStatus')
+             ->with($parameter)
+             ->andReturn($status_return);
+
+        $soap_adapter = \Mockery::mock(SoapClientAdapter::class);
+
+        $soap_adapter->shouldReceive('initialize')
+                     ->with($dragonpay->getWebserviceUrl())
+                     ->andReturn($soap);
+
+        $status = $dragonpay->action(new CheckTransactionStatus($transactionid), $soap_adapter);
+        $this->assertEquals($status, 'Unknown');
+    }
+
+
+    /**
      * @test
      * @dataProvider Tests\DataProviders\DragonpayDataProvider::getAllPaymentChannels()
+     * @group positive
      */
     public function it_should_check_if_payment_channel_is_available_on_days($response)
     {
-        $dragonpay = new Dragonpay();
+        $dragonpay = new Dragonpay($this->merchant_account);
         
-        $parameters['merchantId'] = getenv('MERCHANT_ID') ? getenv('MERCHANT_ID') : 'MERCHANT_ID';
-        $parameters['password'] = getenv('MERCHANT_KEY') ? getenv('MERCHANT_KEY') : 'MERCHANT_KEY';
-        $parameters['amount'] = Dragonpay::ALL_PROCESSORS; // this is optional
         $soap_adapter = \Mockery::mock(SoapClientAdapter::class);
         $soap_adapter->shouldReceive('GetAvailableProcessors')
-                     ->with($parameters)
+                     ->with(\Mockery::any())
                      ->andReturn($response);
 
-        $processors = $dragonpay->getPaymentChannels($parameters, $soap_adapter);
+        $processors = $dragonpay->getPaymentChannels(Dragonpay::ALL_PROCESSORS, $soap_adapter);
 
         $available_everyday = $dragonpay->channels->everyDay($processors[0]->dayOfWeek);
         $available_weekdays = $dragonpay->channels->weekDays('0XXXXX0');
@@ -476,24 +628,20 @@ class DragonpayTest extends TestCase
     /**
      * @test
      * @dataProvider Tests\DataProviders\DragonpayDataProvider::getAllPaymentChannels()
+     * @group positive
      */
     public function it_redirect_to_specific_payment_using_procid_and_token($response, $parameters)
     {
 
-        $dragonpay = new Dragonpay();
+        $dragonpay = new Dragonpay($this->merchant_account);
         
-        $params['merchantId'] = getenv('MERCHANT_ID') ? getenv('MERCHANT_ID') : 'MERCHANT_ID';
-        $params['password'] = getenv('MERCHANT_KEY') ? getenv('MERCHANT_KEY') : 'MERCHANT_KEY';
-        $params['amount'] = Dragonpay::ALL_PROCESSORS; // this is optional
         $soap_adapter = \Mockery::mock(SoapClientAdapter::class);
         $soap_adapter->shouldReceive('GetAvailableProcessors')
-                     ->with($params)
+                     ->with(\Mockery::any())
                      ->andReturn($response);
 
-        $processors = $dragonpay->getPaymentChannels($params, $soap_adapter);
+        $processors = $dragonpay->getPaymentChannels(Dragonpay::ALL_PROCESSORS, $soap_adapter);
 
-        $parameters['merchantid'] = getenv('MERCHANT_ID');
-        $parameters['password'] = getenv('MERCHANT_KEY');
         $parameters['txnid'] = 'TXNID-' . rand();
         
         $token = $dragonpay->getToken(

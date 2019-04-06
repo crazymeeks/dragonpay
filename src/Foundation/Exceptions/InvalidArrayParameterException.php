@@ -7,7 +7,7 @@ use Crazymeeks\Foundation\Exceptions\PaymentException;
 class InvalidArrayParameterException extends PaymentException
 {
 
-    public function construct( $message, $code = 400 )
+    public function construct($message, $code = 400)
     {
         parent::__construct($message, $code);
     }

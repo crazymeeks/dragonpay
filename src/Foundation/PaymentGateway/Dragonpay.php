@@ -10,12 +10,10 @@
 
 namespace Crazymeeks\Foundation\PaymentGateway;
 
-use ReflectionClass;
-use Crazymeeks\Foundation\PaymentGateway\Digest;
+use Ixudra\Curl\CurlService;
 use Crazymeeks\Foundation\PaymentGateway\RequestBag;
 use Crazymeeks\Foundation\Adapter\SoapClientAdapter;
 use Crazymeeks\Foundation\PaymentGateway\Parameters;
-use Crazymeeks\Foundation\Exceptions\PaymentException;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Token;
 use Crazymeeks\Foundation\PaymentGateway\Options\Processor;
 use Crazymeeks\Foundation\PaymentGateway\BillingInfoVerifier;
@@ -23,6 +21,7 @@ use Crazymeeks\Foundation\PaymentGateway\Dragonpay\PaymentChannels;
 use Crazymeeks\Foundation\Exceptions\InvalidPostbackInvokerException;
 use Crazymeeks\Foundation\Exceptions\NoAvailablePaymentChannelsException;
 use Crazymeeks\Foundation\PaymentGateway\Handler\PostbackHandlerInterface;
+use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\ActionInterface;
 use Crazymeeks\Contracts\Foundation\PaymentGateway\PaymentGatewayInterface;
 
 class Dragonpay implements PaymentGatewayInterface
@@ -118,8 +117,6 @@ class Dragonpay implements PaymentGatewayInterface
 	 * @var string
 	 */
     protected $production_url = 'https://gw.dragonpay.ph/Pay.aspx';
-    
-    
 
 	/**
 	 * Dragon pay send billing info url. As of the development of this
@@ -169,7 +166,6 @@ class Dragonpay implements PaymentGatewayInterface
 	 * @var string
 	 */
 	protected $digest;
-
 
 	/**
 	 * Request Body parameters ($_POST)
@@ -225,16 +221,61 @@ class Dragonpay implements PaymentGatewayInterface
      * @var Crazymeeks\Foundation\PaymentGateway\Dragonpay\PaymentChannels
      */
     public $channels;
-    
 
-    public function __construct($sandbox = true)
+    /**
+     * @var Ixudra\Curl\CurlService
+     */
+    private $curl;
+
+    
+    /**
+     * Client merchant account
+     *
+     * @var array
+     */
+    private $merchant_account;
+
+    /**
+     * Constructor
+     * 
+     * @param array $merchant_account
+     *
+     */
+    public function __construct(array $merchant_account, $sandbox = true)
     {
-        $this->is_sandbox = $sandbox;
+
         $this->request = new RequestBag();
         $this->channels = new PaymentChannels();
         $this->parameters = new Parameters($this);
+        $this->parameters->add($merchant_account);
+        $this->setMerchantAccount($merchant_account);
+        $this->is_sandbox = $sandbox;
     }
 
+
+    /**
+     * Set merchant account
+     *
+     * @param array $merchant_account
+     * 
+     * @return $this
+     */
+    private function setMerchantAccount(array $merchant_account)
+    {
+        $this->merchant_account = $merchant_account;
+
+        return $this;
+    }
+
+    /**
+     * Get merchant account
+     *
+     * @return array
+     */
+    public function getMerchantAccount()
+    {
+        return $this->merchant_account;
+    }
 
     /**
      * Set Request Parameters
@@ -294,7 +335,7 @@ class Dragonpay implements PaymentGatewayInterface
     {
 
         $parameters = $this->parameters->prepareRequestTokenParameters($parameters);
-
+        
         $webservice_url = $this->getWebserviceUrl();
 
         if (is_null($soap_adapter)) {
@@ -625,16 +666,18 @@ class Dragonpay implements PaymentGatewayInterface
      * 
      * @return mixed
      */
-    public function getPaymentChannels(array $parameters, SoapClientAdapter $soap_adapter = null)
+    public function getPaymentChannels($amount = self::ALL_PROCESSORS, SoapClientAdapter $soap_adapter = null)
     {
+        $parameters = $this->getMerchantAccount();
+
         if (isset($parameters['merchantid'])) {
             $parameters['merchantId'] = $parameters['merchantid'];
             unset($parameters['merchantid']);
         }
 
-        if (!isset($parameters['amount'])) {
-            $parameters['amount'] = Dragonpay::ALL_PROCESSORS;
-        }
+        $parameters['amount'] = $amount;
+
+        $parameters = $this->filterAvailableProcessorsParameters($parameters);
 
         if (is_null($soap_adapter)) {
             $soap_adapter = new SoapClientAdapter();
@@ -650,6 +693,126 @@ class Dragonpay implements PaymentGatewayInterface
         }
 
         throw new NoAvailablePaymentChannelsException();
+    }
+
+    /**
+     * Filter parameters required by DP's GetAvailableProcessors() method
+     *
+     * @param array $parameters
+     * 
+     * @return array
+     */
+    private function filterAvailableProcessorsParameters(array $parameters)
+    {
+        return [
+            'merchantId' => $parameters['merchantId'],
+            'password' => $parameters['password'],
+            'amount' => $parameters['amount'],
+        ];
+    }
+
+    /**
+     * Automatically determine either merchant
+     * will be redirected to payment gateway url
+     * or can do payment in the background process
+     * 
+     * @param mixed $options
+     *  array(
+     *     'procid' => 'BDO', # payment processor id
+     *     'mustRedirect' => false, # indicates that the merchant can do payment behind-the-scenes.
+     * )
+     *
+     * @param null|\Ixudra\Curl\CurlService $curl
+     * 
+     * @return void
+     */
+    public function silent($options, CurlService $curl = null)
+    {
+
+        $this->curl = is_null($curl) ? new CurlService() : $curl;
+
+        $testing = isset($options['testing']) ? true : false;
+
+        unset($options['testing']);
+
+        $options = $this->getArray($options);
+        
+        return $this->doIntentedAction($options['procid'], $options['mustRedirect'], $testing);
+    }
+
+    /**
+     * Dragonpay transaction action
+     *
+     * @param ActionInterface $action
+     * @param SoapClientAdapter $soap_adapter
+     * 
+     * @return mixed
+     */
+    public function action(ActionInterface $action, SoapClientAdapter $soap_adapter = null)
+    {
+        return $action->doAction($this, $soap_adapter);
+    }
+
+
+    /**
+     * Do intented action
+     * 
+     * @param string $procid      Payment processor id
+     * @param bool $mustRedirect
+     * @param bool $testing       Are we in the unit testing environment?
+     * 
+     * @return mixed
+     */
+    private function doIntentedAction($procid, $mustRedirect = false, $testing = false)
+    {
+        $this->parameters->add(['procid' => $procid]);
+
+        if ($mustRedirect) {
+            $url = $this->away($testing);
+            return $url;
+        }
+
+        
+
+        // $response = file_get_contents($this->getUrl() . '?' . $this->parameters->query());
+        // echo "<pre>";
+        // print_r($response);exit;
+        $response = $this->curl->to($this->getPaymentUrl())
+                               ->withData($this->parameters->get())
+                               ->get();
+        echo "<pre>";
+        print_r($response);exit;
+
+    }
+
+
+    /**
+     * Get array representation of \stdClass object
+     *
+     * @param object|array $options
+     * 
+     * @return array
+     */
+    private function getArray($options)
+    {
+        if ($options instanceof \stdClass) {
+            if (!property_exists($options, 'procid') || !property_exists($options, 'mustRedirect')) {
+                throw new \InvalidArgumentException("{procid} and {mustRedirect} property must be provided.");
+            }
+
+            $options = [
+                'procid' => $options->procid,
+                'mustRedirect' => $options->mustRedirect,
+            ];
+        } else {
+
+            $options = (array) $options;
+            
+            if (!array_key_exists('procid', $options) || !array_key_exists('mustRedirect', $options)) {
+                throw new \InvalidArgumentException("{procid} and {mustRedirect} keys must be provided.");
+            }
+        }
+        return $options;
     }
 
 }

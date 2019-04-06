@@ -61,9 +61,9 @@ class Processor
      * 
      * @throws InvalidProcessIdException
      */
-    public static function allowedProcId( $procid )
+    public static function allowedProcId($procid)
     {
-        if ( ! in_array($procid, static::$valid_proc_ids) ) {
+        if (!in_array($procid, static::$valid_proc_ids)) {
             //throw new InvalidProcessIdException();
         }
     }
