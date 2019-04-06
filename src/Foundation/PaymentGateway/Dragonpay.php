@@ -10,7 +10,6 @@
 
 namespace Crazymeeks\Foundation\PaymentGateway;
 
-use Ixudra\Curl\CurlService;
 use Crazymeeks\Foundation\PaymentGateway\RequestBag;
 use Crazymeeks\Foundation\Adapter\SoapClientAdapter;
 use Crazymeeks\Foundation\PaymentGateway\Parameters;
@@ -725,7 +724,7 @@ class Dragonpay implements PaymentGatewayInterface
      * @param null|\Ixudra\Curl\CurlService $curl
      * 
      * @return void
-     */
+     *
     public function silent($options, CurlService $curl = null)
     {
 
@@ -738,7 +737,7 @@ class Dragonpay implements PaymentGatewayInterface
         $options = $this->getArray($options);
         
         return $this->doIntentedAction($options['procid'], $options['mustRedirect'], $testing);
-    }
+    }*/
 
     /**
      * Dragonpay transaction action
@@ -762,7 +761,7 @@ class Dragonpay implements PaymentGatewayInterface
      * @param bool $testing       Are we in the unit testing environment?
      * 
      * @return mixed
-     */
+     *
     private function doIntentedAction($procid, $mustRedirect = false, $testing = false)
     {
         $this->parameters->add(['procid' => $procid]);
@@ -783,7 +782,7 @@ class Dragonpay implements PaymentGatewayInterface
         echo "<pre>";
         print_r($response);exit;
 
-    }
+    }*/
 
 
     /**
