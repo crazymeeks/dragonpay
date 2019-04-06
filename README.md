@@ -14,22 +14,9 @@
 	<a href="https://github.com/crazymeeks/dragonpay/network"><img src="https://img.shields.io/github/forks/crazymeeks/dragonpay.svg?style=social&label=Fork" alt="Fork"></a>
 </h1>
 
-<h3 style="color: #DF3A01">Features for upcoming release:</h3>
-<ul>	
-	<li>Implementation of <strong>Postback url</strong></li>
-	<li><strong>Transaction Status Inquiry</strong></li>
-	<li><strong>Cancellation of Transaction</strong></li>
-	<li><strong>Customization of Payment Selection</strong></li>
-	<li><strong>Advanced Control</strong>
-		<ul>
-			<li>Determining Available Payment Channels</li>
-			<li>Creating a Transaction and Retrieving the Instruction</li>
-		</ul>
-	</li>
-</ul>
-
 # Documentation  
-#### [v3.0.0](https://github.com/crazymeeks/dragonpay/wiki/Dragonpay-3.0) - latest/stable released.
+#### [v3.2.0](https://github.com/crazymeeks/dragonpay/wiki/v3.2.0) - latest/stable release.
+#### [v3.0.0](https://github.com/crazymeeks/dragonpay/wiki/Dragonpay-3.0)
 #### [v1.1.4](https://github.com/crazymeeks/dragonpay/wiki) (old/deprecated)
 
 
