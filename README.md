@@ -3,6 +3,7 @@
 	<br>
 	Payment Gateway Library in PHP
 	<br>
+	<img src="https://scrutinizer-ci.com/g/crazymeeks/dragonpay/badges/quality-score.png?b=master">
 	<img src="https://travis-ci.org/crazymeeks/dragonpay.svg?branch=develop">
 	<a href="https://packagist.org/packages/crazymeeks/dragonpay"><img src="https://img.shields.io/packagist/v/crazymeeks/dragonpay.svg" alt="Packgist Latest Version"></a>
 	<a href="https://packagist.org/packages/crazymeeks/dragonpay/stats"><img src="https://img.shields.io/packagist/dt/crazymeeks/dragonpay.svg?colorB=00e500" alt="Packgist Downloads"></a>
