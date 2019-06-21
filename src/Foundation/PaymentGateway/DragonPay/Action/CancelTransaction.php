@@ -2,6 +2,7 @@
 
 namespace Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action;
 
+use Ixudra\Curl\CurlService;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay;
 use Crazymeeks\Foundation\Adapter\SoapClientAdapter;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\BaseAction;
@@ -11,19 +12,19 @@ class CancelTransaction extends BaseAction
 {
 
     /**
+     * Dragonpay Web service name
+     *
+     * @var string
+     */
+    protected $name = 'MerchantRequest.aspx';
+
+
+    /**
      * Dragonpay transaction id
      *
      * @var string
      */
     protected $txnid;
-
-    /**
-     * Dragonpay Web service name
-     *
-     * @var string
-     */
-    protected $name = 'CancelTransaction';
-
 
     /**
      * Constructor
@@ -37,21 +38,25 @@ class CancelTransaction extends BaseAction
     }
 
     /**
-     * Cancel transaction
-     *
-     * @param Crazymeeks\Foundation\PaymentGateway\Dragonpay $dragonpay
-     * @param null|Crazymeeks\Foundation\Adapter\SoapClientAdapter $soap_adapter
-     * 
-     * @return void
+     * @inheritDoc
      */
-    public function doAction(Dragonpay $dragonpay, SoapClientAdapter $soap_adapater = null)
+    public function doAction(Dragonpay $dragonpay, CurlService $curl = null)
     {
-        $result = parent::doAction($dragonpay, $soap_adapater);
+        $result = parent::doAction($dragonpay, $curl);
 
-        if ($result->CancelTransactionResult == 0) {
+        if ($result == 0) {
             return true;
         }
         throw new CancelTransactionException();
 
+    }
+
+
+     /**
+     * @inheritDoc
+     */
+    protected function getOp()
+    {
+        return 'VOID';
     }
 }

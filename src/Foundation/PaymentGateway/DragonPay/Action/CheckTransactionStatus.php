@@ -2,6 +2,7 @@
 
 namespace Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action;
 
+use Ixudra\Curl\CurlService;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay;
 use Crazymeeks\Foundation\Adapter\SoapClientAdapter;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\BaseAction;
@@ -16,7 +17,7 @@ class CheckTransactionStatus extends BaseAction
      *
      * @var string
      */
-    protected $name = 'GetTxnStatus';
+    protected $name = 'MerchantRequest.aspx';
     
     protected $txnid;
     
@@ -28,9 +29,19 @@ class CheckTransactionStatus extends BaseAction
     /**
      * @inheritDoc
      */
-    public function doAction(Dragonpay $dragonpay, SoapClientAdapter $soap_adapater = null)
+    public function doAction(Dragonpay $dragonpay, CurlService $curl = null)
     {
-        $result = parent::doAction($dragonpay, $soap_adapater);
-        return Dragonpay::STATUS[$result->GetTxnStatusResult];
+        $status = parent::doAction($dragonpay, $curl);
+
+        return Dragonpay::STATUS[$status];
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    protected function getOp()
+    {
+        return 'GETSTATUS';
     }
 }

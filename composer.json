@@ -17,7 +17,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        
+        "ixudra/curl": "^6.16"
     },
     "require-dev": {
         "mockery/mockery": "^1.2",

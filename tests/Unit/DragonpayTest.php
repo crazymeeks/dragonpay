@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
+use Ixudra\Curl\CurlService;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay;
 use Crazymeeks\Foundation\Exceptions\PaymentException;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Token;
@@ -35,7 +36,7 @@ class DragonpayTest extends TestCase
      */
     public function it_should_create_request_parameters($parameters)
     {
-
+        #$parameters['txnid'] = uniqid();
         $dragonpay = new Dragonpay($this->merchant_account);
 
         $dragonpay->setParameters(
@@ -499,30 +500,45 @@ class DragonpayTest extends TestCase
         $dragonpay = new Dragonpay($this->merchant_account);
 
         $transactionid = 'TXNID-1735646342';
-
-        $cancel_parameters = [
-            'merchantId' => $this->merchant_account['merchantid'],
-            'merchantPwd' => $this->merchant_account['password'],
-            'txnId'       => $transactionid,
+        
+        $parameter = [
+            'merchantid' => $this->merchant_account['merchantid'],
+            'merchantpwd' => $this->merchant_account['password'],
+            'txnid'       => $transactionid,
         ];
 
-        $cancel_return = new \stdClass();
-        $cancel_return->CancelTransactionResult = 0;
+        $url = $dragonpay->getBaseUrlOf('sandbox') . '/MerchantRequest.aspx?op=VOID&' . http_build_query($parameter);
+        
+        $curl = \Mockery::mock(CurlService::class);
+        $curl->shouldReceive('to')
+             ->with($url)
+             ->andReturnSelf();
+        $curl->shouldReceive('get')
+             ->andReturn(0);
 
-        $soap = \Mockery::mock(\SoapClient::class);
-        $soap->shouldReceive('CancelTransaction')
-             ->with($cancel_parameters)
-             ->andReturn($cancel_return);
 
-        $soap_adapter = \Mockery::mock(SoapClientAdapter::class);
-
-        $soap_adapter->shouldReceive('initialize')
-                     ->with($dragonpay->getWebserviceUrl())
-                     ->andReturn($soap);
-
-        $is_cancelled = $dragonpay->action(new CancelTransaction($transactionid), $soap_adapter);
+        $is_cancelled = $dragonpay->action(new CancelTransaction($transactionid), $curl);
 
         $this->assertTrue($is_cancelled);
+
+
+        // $cancel_return = new \stdClass();
+        // $cancel_return->CancelTransactionResult = 0;
+
+        // $soap = \Mockery::mock(\SoapClient::class);
+        // $soap->shouldReceive('CancelTransaction')
+        //      ->with($cancel_parameters)
+        //      ->andReturn($cancel_return);
+
+        // $soap_adapter = \Mockery::mock(SoapClientAdapter::class);
+
+        // $soap_adapter->shouldReceive('initialize')
+        //              ->with($dragonpay->getWebserviceUrl())
+        //              ->andReturn($soap);
+
+        // $is_cancelled = $dragonpay->action(new CancelTransaction($transactionid), $soap_adapter);
+
+        // $this->assertTrue($is_cancelled);
 
     }
 
@@ -536,28 +552,23 @@ class DragonpayTest extends TestCase
         $dragonpay = new Dragonpay($this->merchant_account);
 
         $transactionid = 'TXNID-1735646342';
-
-        $cancel_parameters = [
-            'merchantId' => $this->merchant_account['merchantid'],
-            'merchantPwd' => $this->merchant_account['password'],
-            'txnId'       => $transactionid,
+        
+        $parameter = [
+            'merchantid' => $this->merchant_account['merchantid'],
+            'merchantpwd' => $this->merchant_account['password'],
+            'txnid'       => $transactionid,
         ];
 
-        $cancel_return = new \stdClass();
-        $cancel_return->CancelTransactionResult = -1;
+        $url = $dragonpay->getBaseUrlOf('sandbox') . '/MerchantRequest.aspx?op=VOID&' . http_build_query($parameter);
+        
+        $curl = \Mockery::mock(CurlService::class);
+        $curl->shouldReceive('to')
+             ->with($url)
+             ->andReturnSelf();
+        $curl->shouldReceive('get')
+             ->andReturn(-1);
 
-        $soap = \Mockery::mock(\SoapClient::class);
-        $soap->shouldReceive('CancelTransaction')
-             ->with($cancel_parameters)
-             ->andReturn($cancel_return);
-
-        $soap_adapter = \Mockery::mock(SoapClientAdapter::class);
-
-        $soap_adapter->shouldReceive('initialize')
-                     ->with($dragonpay->getWebserviceUrl())
-                     ->andReturn($soap);
-
-        $dragonpay->action(new CancelTransaction($transactionid), $soap_adapter);
+        $dragonpay->action(new CancelTransaction($transactionid), $curl);
 
     }
 
@@ -570,14 +581,28 @@ class DragonpayTest extends TestCase
         $dragonpay = new Dragonpay($this->merchant_account);
 
         $transactionid = 'TXNID-1735646342';
-
+        $transactionid = '5d0c345729043';
         $parameter = [
-            'merchantId' => $this->merchant_account['merchantid'],
-            'merchantPwd' => $this->merchant_account['password'],
-            'txnId'       => $transactionid,
+            'merchantid' => $this->merchant_account['merchantid'],
+            'merchantpwd' => $this->merchant_account['password'],
+            'txnid'       => $transactionid,
         ];
 
-        $status_return = new \stdClass();
+        $url = $dragonpay->getBaseUrlOf('sandbox') . '/MerchantRequest.aspx?op=GETSTATUS&' . http_build_query($parameter);
+        
+        $curl = \Mockery::mock(CurlService::class);
+        $curl->shouldReceive('to')
+             ->with($url)
+             ->andReturnSelf();
+        $curl->shouldReceive('get')
+             ->andReturn('S');
+
+        $status = $dragonpay->action(new CheckTransactionStatus($transactionid), $curl);
+        
+        $this->assertEquals($status, 'Success');
+
+
+        /*$status_return = new \stdClass();
         $status_return->GetTxnStatusResult = 'U';
 
         $soap = \Mockery::mock(\SoapClient::class);
@@ -592,7 +617,7 @@ class DragonpayTest extends TestCase
                      ->andReturn($soap);
 
         $status = $dragonpay->action(new CheckTransactionStatus($transactionid), $soap_adapter);
-        $this->assertEquals($status, 'Unknown');
+        $this->assertEquals($status, 'Unknown');*/
     }
 
 

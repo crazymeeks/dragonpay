@@ -10,6 +10,7 @@
 
 namespace Crazymeeks\Foundation\PaymentGateway;
 
+use Ixudra\Curl\CurlService;
 use Crazymeeks\Foundation\PaymentGateway\RequestBag;
 use Crazymeeks\Foundation\Adapter\SoapClientAdapter;
 use Crazymeeks\Foundation\PaymentGateway\Parameters;
@@ -103,17 +104,32 @@ class Dragonpay implements PaymentGatewayInterface
     const ALL_PROCESSORS = -1000;
 
 
+    /**
+     * Payment base url
+     *
+     * @var array
+     */
+    protected $baseUrl = [
+        'sandbox' => 'https://test.dragonpay.ph',
+        'production' => 'https://gw.dragonpay.ph',
+    ];
+
+
 	/**
 	 * DragonPay sandbox url
 	 *
 	 * @var string
+     * 
+     * @todo:: refactor, use $baseUrl['sandbox'] instead then just append the 'Pay.aspx'
 	 */
-	protected $sandbox_url = 'http://test.dragonpay.ph/Pay.aspx';
+	protected $sandbox_url = 'https://test.dragonpay.ph/Pay.aspx';
 
 	/**
 	 * DragonPay production url
 	 *
 	 * @var string
+     * 
+     * @todo:: refactor, use $baseUrl['production] instead then just append the 'Pay.aspx'
 	 */
     protected $production_url = 'https://gw.dragonpay.ph/Pay.aspx';
 
@@ -743,13 +759,13 @@ class Dragonpay implements PaymentGatewayInterface
      * Dragonpay transaction action
      *
      * @param ActionInterface $action
-     * @param SoapClientAdapter $soap_adapter
+     * @param \Ixudra\Curl\CurlService $curl
      * 
      * @return mixed
      */
-    public function action(ActionInterface $action, SoapClientAdapter $soap_adapter = null)
+    public function action(ActionInterface $action, CurlService $curl = null)
     {
-        return $action->doAction($this, $soap_adapter);
+        return $action->doAction($this, $curl);
     }
 
 
@@ -812,6 +828,23 @@ class Dragonpay implements PaymentGatewayInterface
             }
         }
         return $options;
+    }
+
+
+    /**
+     * Get payment payment url of either sandbox or production
+     *
+     * @param string $modeType   i.e 'sandbox|production'
+     * 
+     * @return string
+     */
+    public function getBaseUrlOf(string $modeType)
+    {
+        if (!in_array(strtolower($modeType), ['sandbox', 'production'])) {
+            throw new \InvalidArgumentException(sprintf("Modetype is %s is not supported. Please select between {sandbox} or {production} mode only.", $modeType));
+        }
+
+        return $this->baseUrl[$modeType];
     }
 
 }
