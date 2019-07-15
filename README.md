@@ -1,5 +1,5 @@
 <h1 align="center">
-	<a href="https://www.dragonpay.ph/" target="_blank"><img src="https://www.dragonpay.ph/wp-content/themes/wp365_theme/img/logo_dragonpay.png" alt="Dragonpay"></a>
+	<a href="https://www.dragonpay.ph/" target="_blank"><img src="https://www.dragonpay.ph/wp-content/uploads/2019/04/mini-logo.png" alt="Dragonpay"></a>
 	<br>
 	Payment Gateway Library in PHP
 	<br>
