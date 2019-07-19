@@ -20,7 +20,7 @@
 #### [v1.1.4](https://github.com/crazymeeks/dragonpay/wiki)
 
 
-## Author
+##### Author
 ```
       _       __  __    ____ _                 _
      | | ___ / _|/ _|  / ___| | __ _ _   _  __| |
