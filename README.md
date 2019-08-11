@@ -15,8 +15,7 @@
 </h1>
 
 # Documentation  
-#### [v3.2.1](https://github.com/crazymeeks/dragonpay/wiki/v3.2.0) - latest/stable release.
-#### [v3.0.0](https://github.com/crazymeeks/dragonpay/wiki/Dragonpay-3.0)
+#### [v3.2.1](https://github.com/crazymeeks/dragonpay/wiki/Dragonpay-3.0) - latest/stable release.
 #### [v1.1.4](https://github.com/crazymeeks/dragonpay/wiki)
 
 
