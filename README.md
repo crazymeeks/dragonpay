@@ -21,5 +21,5 @@
 Jeff Claud
 
 
-##### This library is absolute free, but in case you wanted to donate.
+##### This library is absolutely free, but in case you wanted to donate.
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MTPVEBCWQG92C)
