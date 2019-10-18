@@ -1,11 +1,12 @@
 <?php
 
-/**
- * Dragonpay core library. 
+/*
+ * This file is part of the Dragonpay library.
  *
  * (c) Jefferson Claud <jeffclaud17@gmail.com>
  *
- * @author Jefferson Claud
+ * For the full copyright and license information, please view the LICENSE.txt
+ * file that was distributed with this source code.
  */
 
 namespace Crazymeeks\Foundation\PaymentGateway;
@@ -96,6 +97,15 @@ class Dragonpay implements PaymentGatewayInterface
     const GCASH        = 128;
     const INTL_OTC     = 256;
 
+    const WS_ENDPOINT = '/DragonPayWebService/MerchantService.asmx';
+
+    const WS_BILLING_INFO = 'send_billing_info_url';
+
+    const WS_SANDBOX_URL = 'sanbox_ws_url';
+
+    const WS_PRODUCTION_URL = 'production_ws_url';
+
+
     /**
      * Code to get all available processors
      * when calling GetAvailableProcessors()
@@ -103,6 +113,9 @@ class Dragonpay implements PaymentGatewayInterface
      */
     const ALL_PROCESSORS = -1000;
 
+    const SANDBOX = 'sandbox';
+
+    const PRODUCTION = 'production';
 
     /**
      * Payment base url
@@ -110,54 +123,36 @@ class Dragonpay implements PaymentGatewayInterface
      * @var array
      */
     protected $baseUrl = [
-        'sandbox' => 'https://test.dragonpay.ph',
-        'production' => 'https://gw.dragonpay.ph',
+        self::SANDBOX => 'https://test.dragonpay.ph/Pay.aspx',
+        self::PRODUCTION => 'https://gw.dragonpay.ph/Pay.aspx',
     ];
 
+    protected $wsBaseUrl = [
 
-	/**
-	 * DragonPay sandbox url
-	 *
-	 * @var string
-     * 
-     * @todo:: refactor, use $baseUrl['sandbox'] instead then just append the 'Pay.aspx'
-	 */
-	protected $sandbox_url = 'https://test.dragonpay.ph/Pay.aspx';
+        /**
+        * Dragonpay send billing info url. As of the development of this
+        * library, unfortunately dragonpay has no sandbox url for the
+        * SendBillingInfo() or credit card
+        *
+        * If you wish to change the url of SendBillingInfo(), you can call
+        * the setBillingInfoUrl($full_url) method
+        */
+        self::WS_BILLING_INFO => 'https://gw.dragonpay.ph' . self::WS_ENDPOINT,
 
-	/**
-	 * DragonPay production url
-	 *
-	 * @var string
-     * 
-     * @todo:: refactor, use $baseUrl['production] instead then just append the 'Pay.aspx'
-	 */
-    protected $production_url = 'https://gw.dragonpay.ph/Pay.aspx';
-
-	/**
-	 * Dragon pay send billing info url. As of the development of this
-	 * library, unfortunately dragonpay has no sandbox url for the
-	 * SendBillingInfo() or credit card
-	 *
-	 * If you wish to change the url of SendBillingInfo(), you can call
-	 * the setBillingInfoUrl($full_url) method
-	 *
-	 */
-	protected $sendbillinginfo_url = 'https://gw.dragonpay.ph/DragonPayWebService/MerchantService.asmx';
-
-	/**
-	 * Dragon pay sandbox web service url
-	 *
-	 * For greater security, developer can implement the API using the XML Web
-	 * Services Model. Under this model, the parameters are not passed
-	 * through browser redirects which are visile to end-users. Instead,
-	 * parameters are exchanged directly between the Merchant site and
-	 * PS servers through SOAP calls.
-	 * 
-	 * @var string
-	 */
-	protected $sandboxWebServiceUrl = 'http://test.dragonpay.ph/DragonPayWebService/MerchantService.asmx';
-
-	protected $productionWebServiceUrl = 'https://secure.dragonpay.ph/DragonPayWebService/MerchantService.asmx';
+        /**
+         * Dragonpay sandbox web service url
+         *
+         * For greater security, developer can implement the API using the XML Web
+         * Services Model. Under this model, the parameters are not passed
+         * through browser redirects which are visile to end-users. Instead,
+         * parameters are exchanged directly between the Merchant site and
+         * PS servers through SOAP calls.
+         * 
+         * @var string
+         */
+        self::WS_SANDBOX_URL => 'http://test.dragonpay.ph' . self::WS_ENDPOINT,
+        self::WS_PRODUCTION_URL => 'https://secure.dragonpay.ph' . self::WS_ENDPOINT,
+    ];
     
     /**
      * SOAP web service url
@@ -348,7 +343,7 @@ class Dragonpay implements PaymentGatewayInterface
      */
     public function getToken(array $parameters, SoapClientAdapter $soap_adapter = null)
     {
-
+        
         $parameters = $this->parameters->prepareRequestTokenParameters($parameters);
         
         $webservice_url = $this->getWebserviceUrl();
@@ -362,6 +357,7 @@ class Dragonpay implements PaymentGatewayInterface
         $code = $token->GetTxnTokenResult;
         
 		if (array_key_exists($code, $this->error_codes)) {
+            
             $this->throwException($code);
         }
 
@@ -374,7 +370,7 @@ class Dragonpay implements PaymentGatewayInterface
     {  
         $this->setDebugMessage($this->error_codes[$code]);
         $exception = "Crazymeeks\Foundation\Exceptions\\" . $this->getExceptionClass( $code );
-        throw new $exception( $this->seeError() );
+        throw new $exception($this->seeError());
     }
 
     /**
@@ -452,7 +448,7 @@ class Dragonpay implements PaymentGatewayInterface
     {
         $url = rtrim((rtrim($url, '/')), '?');
 
-        $this->sendbillinginfo_url = $url;
+        $this->wsBaseUrl[self::WS_BILLING_INFO] = $url;
 
         return $this;
     }
@@ -464,7 +460,7 @@ class Dragonpay implements PaymentGatewayInterface
      */
     public function getBillingInfoUrl()
     {
-        return $this->sendbillinginfo_url;
+        return $this->wsBaseUrl[self::WS_BILLING_INFO];
     }
 
     /**
@@ -524,7 +520,7 @@ class Dragonpay implements PaymentGatewayInterface
     public function setWebServiceUrl($url)
     {
 
-        $this->getPaymentMode() === 'sandbox' ? $this->sandboxWebServiceUrl = $url : $this->productionWebServiceUrl = $url;
+        $this->getPaymentMode() === 'sandbox' ? $this->wsBaseUrl[self::WS_SANDBOX_URL] = $url : $this->wsBaseUrl[self::WS_PRODUCTION_URL] = $url;
 
         return $this;
     }
@@ -536,7 +532,7 @@ class Dragonpay implements PaymentGatewayInterface
      */
     public function getWebserviceUrl()
     {
-        return  $this->getPaymentMode() === 'sandbox' ? $this->sandboxWebServiceUrl : $this->productionWebServiceUrl;
+        return  $this->getPaymentMode() === 'sandbox' ? $this->wsBaseUrl[self::WS_SANDBOX_URL] : $this->wsBaseUrl[self];
     }
 
     /**
@@ -546,7 +542,7 @@ class Dragonpay implements PaymentGatewayInterface
      */
     public function getUrl()
     {
-        return $this->is_sandbox ? $this->sandbox_url : $this->production_url;
+        return $this->is_sandbox ? $this->baseUrl[self::SANDBOX] : $this->baseUrl[self::PRODUCTION];
     }
 
     /**
@@ -568,34 +564,7 @@ class Dragonpay implements PaymentGatewayInterface
      */
     public function setPaymentUrl( $url)
     {
-        /*$mode = strtolower($mode);
-        if ( ! in_array($mode, ['sandbox', 'production']) ) {
-            throw new \Exception(sprintf("Invalid mode '%s'. Please select 'sandbox' or 'production' as payment mode.", $mode));
-        }
-
-        $url = rtrim(rtrim($url, '/'), '?');
-        
-        if ( $mode === 'sandbox' ) {
-            $this->is_sandbox = true;
-            if ( $this->token instanceof Token ) {
-                $this->sandboxWebServiceUrl = $url;
-            } else {
-                $this->sandbox_url = $url;
-            }
-
-            
-        } else {
-            $this->is_sandbox = false;
-
-            if ( $this->token instanceof Token ) {
-                $this->productionWebServiceUrl = $url;
-            } else {
-                $this->production_url = $url;
-            }
-
-        }*/
-
-        $this->getPaymentMode() === 'sandbox' ? $this->sandbox_url = $url : $this->production_url = $url;;
+        $this->getPaymentMode() === 'sandbox' ? $this->baseUrl[self::SANDBOX] = $url : $this->baseUrl[self::PRODUCTION] = $url;
 
         return $this;
     }
@@ -726,34 +695,6 @@ class Dragonpay implements PaymentGatewayInterface
         ];
     }
 
-    /**
-     * Automatically determine either merchant
-     * will be redirected to payment gateway url
-     * or can do payment in the background process
-     * 
-     * @param mixed $options
-     *  array(
-     *     'procid' => 'BDO', # payment processor id
-     *     'mustRedirect' => false, # indicates that the merchant can do payment behind-the-scenes.
-     * )
-     *
-     * @param null|\Ixudra\Curl\CurlService $curl
-     * 
-     * @return void
-     *
-    public function silent($options, CurlService $curl = null)
-    {
-
-        $this->curl = is_null($curl) ? new CurlService() : $curl;
-
-        $testing = isset($options['testing']) ? true : false;
-
-        unset($options['testing']);
-
-        $options = $this->getArray($options);
-        
-        return $this->doIntentedAction($options['procid'], $options['mustRedirect'], $testing);
-    }*/
 
     /**
      * Dragonpay transaction action
@@ -767,38 +708,6 @@ class Dragonpay implements PaymentGatewayInterface
     {
         return $action->doAction($this, $curl);
     }
-
-
-    /**
-     * Do intented action
-     * 
-     * @param string $procid      Payment processor id
-     * @param bool $mustRedirect
-     * @param bool $testing       Are we in the unit testing environment?
-     * 
-     * @return mixed
-     *
-    private function doIntentedAction($procid, $mustRedirect = false, $testing = false)
-    {
-        $this->parameters->add(['procid' => $procid]);
-
-        if ($mustRedirect) {
-            $url = $this->away($testing);
-            return $url;
-        }
-
-        
-
-        // $response = file_get_contents($this->getUrl() . '?' . $this->parameters->query());
-        // echo "<pre>";
-        // print_r($response);exit;
-        $response = $this->curl->to($this->getPaymentUrl())
-                               ->withData($this->parameters->get())
-                               ->get();
-        echo "<pre>";
-        print_r($response);exit;
-
-    }*/
 
 
     /**
@@ -846,5 +755,4 @@ class Dragonpay implements PaymentGatewayInterface
 
         return $this->baseUrl[$modeType];
     }
-
 }

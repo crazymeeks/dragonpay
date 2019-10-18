@@ -5,7 +5,8 @@
     "license": "MIT",
     "keywords": [
         "Dragonpay library",
-        "Dragonpay PHP library"
+        "Dragonpay PHP library",
+        "Dragonpay PHP"
     ],
     "homepage": "https://github.com/crazymeeks/dragonpay",
     "authors": [
@@ -35,11 +36,11 @@
             "type": "package",
             "package": {
                 "name": "crazymeeks/dragonpay",
-                "version": "v3.2.0",
+                "version": "v3.2.1",
                 "source": {
                     "url": "git://github.com/crazymeeks/dragonpay",
                     "type": "git",
-                    "reference": "v3.2.0"
+                    "reference": "v3.2.1"
                 },
                 "autoload": {
                     "psr-4": {

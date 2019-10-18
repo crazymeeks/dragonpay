@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Dragonpay library.
+ *
+ * (c) Jefferson Claud <jeffclaud17@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE.txt
+ * file that was distributed with this source code.
+ */
+
 namespace Tests\Unit;
 
 use Tests\TestCase;
@@ -38,7 +47,7 @@ class DragonpayTest extends TestCase
     {
         #$parameters['txnid'] = uniqid();
         $dragonpay = new Dragonpay($this->merchant_account);
-
+        
         $dragonpay->setParameters(
             $parameters
         );
@@ -128,16 +137,22 @@ class DragonpayTest extends TestCase
     * @dataProvider Tests\DataProviders\DragonpayDataProvider::request_parameters()
     * @group positive
     */
-    public function it_should_see_error($parameters)
+    public function it_should_see_error_when_dragonpay_return_error_when_requesting_web_service_token($parameters)
     {
 
-        $dragonpay = new Dragonpay($this->merchant_account);
+        $credentials = [
+            'merchantid' => 'MERCHANTID' ,
+            'password' => 'PASSWORD',
+        ];
+
+        $dragonpay = new Dragonpay($credentials);
+
         try{
             $token = $dragonpay->getToken(
                 $parameters
             );
         }catch( PaymentException $e ){
-            $this->assertEquals( $e->getMessage(), $dragonpay->seeError() );
+            $this->assertEquals($e->getMessage(), $dragonpay->seeError());
         }
     }
     
@@ -196,6 +211,7 @@ class DragonpayTest extends TestCase
         $token = $dragonpay->getToken(
             $parameters
         );
+        
         $dragonpay->filterPaymentChannel( Dragonpay::CREDIT_CARD );
         $url = $dragonpay->away( true );
         
@@ -520,25 +536,6 @@ class DragonpayTest extends TestCase
         $is_cancelled = $dragonpay->action(new CancelTransaction($transactionid), $curl);
 
         $this->assertTrue($is_cancelled);
-
-
-        // $cancel_return = new \stdClass();
-        // $cancel_return->CancelTransactionResult = 0;
-
-        // $soap = \Mockery::mock(\SoapClient::class);
-        // $soap->shouldReceive('CancelTransaction')
-        //      ->with($cancel_parameters)
-        //      ->andReturn($cancel_return);
-
-        // $soap_adapter = \Mockery::mock(SoapClientAdapter::class);
-
-        // $soap_adapter->shouldReceive('initialize')
-        //              ->with($dragonpay->getWebserviceUrl())
-        //              ->andReturn($soap);
-
-        // $is_cancelled = $dragonpay->action(new CancelTransaction($transactionid), $soap_adapter);
-
-        // $this->assertTrue($is_cancelled);
 
     }
 

@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Dragonpay library.
+ *
+ * (c) Jefferson Claud <jeffclaud17@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE.txt
+ * file that was distributed with this source code.
+ */
+
 namespace Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action;
 
 use Ixudra\Curl\CurlService;
@@ -43,16 +52,7 @@ abstract class BaseAction implements ActionInterface
         
         $result = $curl->to($url)
                        ->get();
-
-        
-        // $soap = $curl->initialize($dragonpay->getWebserviceUrl());
-
-        // $result = $soap->{$this->name}([
-        //     'merchantId' => $merchant_account['merchantid'],
-        //     'merchantPwd' => $merchant_account['password'],
-        //     'txnId'       => $this->txnid,
-        // ]);
-        
+                       
         return $result;
 
     }
