@@ -598,15 +598,16 @@ class Dragonpay implements PaymentGatewayInterface
      * Postback handler
      * 
      * @param Crazymeeks\Foundation\PaymentGateway\Handler\PostbackHandlerInterface|\Closure $callback
+     * @param array $postData
      * 
      * @return mixed
      */
-    public function handlePostback($callback)
+    public function handlePostback($callback, array $postData)
     {
 
-        if (isset($_POST['status'])) {
-            $description = $this->getStatusDescription($_POST['status']);
-            $data = $_POST;
+        if (isset($postData['status'])) {
+            $description = $this->getStatusDescription($postData['status']);
+            $data = $postData;
             $data['description'] = $description;
             if ($callback instanceof \Closure) {
                 return call_user_func_array($callback, [$data]);

@@ -397,7 +397,7 @@ class DragonpayTest extends TestCase
             $this->assertArrayHasKey('message', $data);
             $this->assertArrayHasKey('digest', $data);
             $this->assertArrayHasKey('description', $data);
-        });
+        }, $_POST);
     }
 
     /**
@@ -411,7 +411,7 @@ class DragonpayTest extends TestCase
 
         $dragonpay = new Dragonpay($this->merchant_account);
         $my_post_backhandler_class = new \Tests\Classes\PostbackHandler();
-        $response = $dragonpay->handlePostback($my_post_backhandler_class);
+        $response = $dragonpay->handlePostback($my_post_backhandler_class, $_POST);
         $this->assertArrayHasKey('txnid', $response);
         $this->assertArrayHasKey('refno', $response);
         $this->assertArrayHasKey('status', $response);
