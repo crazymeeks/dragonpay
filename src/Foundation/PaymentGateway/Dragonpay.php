@@ -532,7 +532,7 @@ class Dragonpay implements PaymentGatewayInterface
      */
     public function getWebserviceUrl()
     {
-        return  $this->getPaymentMode() === 'sandbox' ? $this->wsBaseUrl[self::WS_SANDBOX_URL] : $this->wsBaseUrl[self];
+        return  $this->getPaymentMode() === 'sandbox' ? $this->wsBaseUrl[self::WS_SANDBOX_URL] : $this->wsBaseUrl[self::WS_PRODUCTION_URL];
     }
 
     /**
