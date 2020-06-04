@@ -40,7 +40,7 @@ abstract class BaseAction implements ActionInterface
         $merchant_account = $dragonpay->getMerchantAccount();
 
         
-        $url = rtrim($dragonpay->getBaseUrlOf($dragonpay->getPaymentMode()), '/') . '/' . $this->name . '?op=' . $this->getOp() . '&';
+        $url = str_replace('/Pay.aspx', '', rtrim($dragonpay->getBaseUrlOf($dragonpay->getPaymentMode()), '/') . '/' . $this->name . '?op=' . $this->getOp() . '&');
 
         $parameters = [
             'merchantid' => $merchant_account['merchantid'],

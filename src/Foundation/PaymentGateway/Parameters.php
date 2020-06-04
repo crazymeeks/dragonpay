@@ -163,7 +163,7 @@ class Parameters
 		$_parameters[Parameters::REQUEST_TOKEN_PARAM_MERCHANT_TXNID] = $parameters[Parameters::REQUEST_PARAM_TXNID];
 		$_parameters[Parameters::REQUEST_TOKEN_PARAM_AMOUNT] = number_format($parameters[Parameters::REQUEST_PARAM_AMOUNT], 2, '.', '');
 		$_parameters[Parameters::REQUEST_TOKEN_PARAM_CCY] = $parameters[Parameters::REQUEST_PARAM_CCY];
-		$_parameters[Parameters::REQUEST_TOKEN_PARAM_DESCRIPTION] = urlencode($parameters[Parameters::REQUEST_PARAM_DESCRIPTION]);
+		$_parameters[Parameters::REQUEST_TOKEN_PARAM_DESCRIPTION] = $parameters[Parameters::REQUEST_PARAM_DESCRIPTION];
 		$_parameters[Parameters::REQUEST_TOKEN_PARAM_EMAIL] = $parameters[Parameters::REQUEST_PARAM_EMAIL];
 		$_parameters[Parameters::REQUEST_TOKEN_PARAM_PARAM1] = isset($parameters[Parameters::REQUEST_PARAM_PARAM1]) ? $parameters[Parameters::REQUEST_PARAM_PARAM1] : '';
 		$_parameters[Parameters::REQUEST_TOKEN_PARAM_PARAM2] = isset($parameters[Parameters::REQUEST_PARAM_PARAM2]) ? $parameters[Parameters::REQUEST_PARAM_PARAM2] : '';

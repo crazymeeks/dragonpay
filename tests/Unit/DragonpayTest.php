@@ -180,7 +180,7 @@ class DragonpayTest extends TestCase
         $dragonpay = new Dragonpay($this->merchant_account);
 
         $parameters['txnid'] = 'TXNID-' . rand();
-
+        $parameters['description'] = 'Test Description';
         $dragonpay->setParameters(
             $parameters
         );
@@ -523,7 +523,7 @@ class DragonpayTest extends TestCase
             'txnid'       => $transactionid,
         ];
 
-        $url = $dragonpay->getBaseUrlOf('sandbox') . '/MerchantRequest.aspx?op=VOID&' . http_build_query($parameter);
+        $url = str_replace('/Pay.aspx', '', $dragonpay->getBaseUrlOf('sandbox') . '/MerchantRequest.aspx?op=VOID&' . http_build_query($parameter));
         
         $curl = \Mockery::mock(CurlService::class);
         $curl->shouldReceive('to')
@@ -556,7 +556,7 @@ class DragonpayTest extends TestCase
             'txnid'       => $transactionid,
         ];
 
-        $url = $dragonpay->getBaseUrlOf('sandbox') . '/MerchantRequest.aspx?op=VOID&' . http_build_query($parameter);
+        $url = str_replace('/Pay.aspx', '', $dragonpay->getBaseUrlOf('sandbox') . '/MerchantRequest.aspx?op=VOID&' . http_build_query($parameter));
         
         $curl = \Mockery::mock(CurlService::class);
         $curl->shouldReceive('to')
@@ -585,7 +585,7 @@ class DragonpayTest extends TestCase
             'txnid'       => $transactionid,
         ];
 
-        $url = $dragonpay->getBaseUrlOf('sandbox') . '/MerchantRequest.aspx?op=GETSTATUS&' . http_build_query($parameter);
+        $url = str_replace('/Pay.aspx','', $dragonpay->getBaseUrlOf('sandbox') . '/MerchantRequest.aspx?op=GETSTATUS&' . http_build_query($parameter));
         
         $curl = \Mockery::mock(CurlService::class);
         $curl->shouldReceive('to')
@@ -598,23 +598,6 @@ class DragonpayTest extends TestCase
         
         $this->assertEquals($status, 'Success');
 
-
-        /*$status_return = new \stdClass();
-        $status_return->GetTxnStatusResult = 'U';
-
-        $soap = \Mockery::mock(\SoapClient::class);
-        $soap->shouldReceive('GetTxnStatus')
-             ->with($parameter)
-             ->andReturn($status_return);
-
-        $soap_adapter = \Mockery::mock(SoapClientAdapter::class);
-
-        $soap_adapter->shouldReceive('initialize')
-                     ->with($dragonpay->getWebserviceUrl())
-                     ->andReturn($soap);
-
-        $status = $dragonpay->action(new CheckTransactionStatus($transactionid), $soap_adapter);
-        $this->assertEquals($status, 'Unknown');*/
     }
 
 
