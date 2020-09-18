@@ -12,7 +12,7 @@
 namespace Crazymeeks\Foundation\PaymentGateway;
 
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay;
-use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Token;
+use Crazymeeks\Foundation\PaymentGateway\DragonPay\Token;
 use Crazymeeks\Foundation\Exceptions\InvalidArrayParameterException;
 
 class Parameters

@@ -15,13 +15,13 @@ use Tests\TestCase;
 use Ixudra\Curl\CurlService;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay;
 use Crazymeeks\Foundation\Exceptions\PaymentException;
-use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Token;
+use Crazymeeks\Foundation\PaymentGateway\DragonPay\Token;
 use Crazymeeks\Foundation\PaymentGateway\Options\Processor;
 
 use Crazymeeks\Foundation\Adapter\SoapClientAdapter;
 use Crazymeeks\Foundation\PaymentGateway\BillingInfoVerifier;
-use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\CancelTransaction;
-use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\CheckTransactionStatus;
+use Crazymeeks\Foundation\PaymentGateway\DragonPay\Action\CancelTransaction;
+use Crazymeeks\Foundation\PaymentGateway\DragonPay\Action\CheckTransactionStatus;
 
 class DragonpayTest extends TestCase
 {

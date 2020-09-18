@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action;
+namespace Crazymeeks\Foundation\PaymentGateway\DragonPay\Action;
 
 use Ixudra\Curl\CurlService;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay;

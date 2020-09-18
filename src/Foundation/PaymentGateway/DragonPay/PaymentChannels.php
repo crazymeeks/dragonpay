@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Crazymeeks\Foundation\PaymentGateway\Dragonpay;
+namespace Crazymeeks\Foundation\PaymentGateway\DragonPay;
 
 class PaymentChannels
 {

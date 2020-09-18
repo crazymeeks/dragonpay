@@ -9,12 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action;
+namespace Crazymeeks\Foundation\PaymentGateway\DragonPay\Action;
 
 use Ixudra\Curl\CurlService;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay;
 use Crazymeeks\Foundation\Adapter\SoapClientAdapter;
-use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\BaseAction;
+use Crazymeeks\Foundation\PaymentGateway\DragonPay\Action\BaseAction;
 
 class CheckTransactionStatus extends BaseAction
 {

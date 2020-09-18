@@ -15,14 +15,14 @@ use Ixudra\Curl\CurlService;
 use Crazymeeks\Foundation\PaymentGateway\RequestBag;
 use Crazymeeks\Foundation\Adapter\SoapClientAdapter;
 use Crazymeeks\Foundation\PaymentGateway\Parameters;
-use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Token;
+use Crazymeeks\Foundation\PaymentGateway\DragonPay\Token;
 use Crazymeeks\Foundation\PaymentGateway\Options\Processor;
 use Crazymeeks\Foundation\PaymentGateway\BillingInfoVerifier;
-use Crazymeeks\Foundation\PaymentGateway\Dragonpay\PaymentChannels;
+use Crazymeeks\Foundation\PaymentGateway\DragonPay\PaymentChannels;
 use Crazymeeks\Foundation\Exceptions\InvalidPostbackInvokerException;
 use Crazymeeks\Foundation\Exceptions\NoAvailablePaymentChannelsException;
 use Crazymeeks\Foundation\PaymentGateway\Handler\PostbackHandlerInterface;
-use Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\ActionInterface;
+use Crazymeeks\Foundation\PaymentGateway\DragonPay\Action\ActionInterface;
 use Crazymeeks\Contracts\Foundation\PaymentGateway\PaymentGatewayInterface;
 
 class Dragonpay implements PaymentGatewayInterface
