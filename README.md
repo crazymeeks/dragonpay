@@ -14,7 +14,7 @@
 	<a href="https://github.com/crazymeeks/dragonpay/network"><img src="https://img.shields.io/github/forks/crazymeeks/dragonpay.svg?style=social&label=Fork" alt="Fork"></a>
 </h1>
 
-#### For documentation [click here](https://github.com/crazymeeks/dragonpay/wiki/v3.2.5)
+#### For documentation [click here](https://github.com/crazymeeks/dragonpay/wiki/v3.2.7)
 
 
 ##### Author
