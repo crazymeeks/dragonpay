@@ -150,8 +150,8 @@ class Dragonpay implements PaymentGatewayInterface
          * 
          * @var string
          */
-        self::WS_SANDBOX_URL => 'http://test.dragonpay.ph' . self::WS_ENDPOINT,
-        self::WS_PRODUCTION_URL => 'https://secure.dragonpay.ph' . self::WS_ENDPOINT,
+        self::WS_SANDBOX_URL => 'https://test.dragonpay.ph' . self::WS_ENDPOINT,
+        self::WS_PRODUCTION_URL => 'https://gw.dragonpay.ph' . self::WS_ENDPOINT,
     ];
     
     /**
