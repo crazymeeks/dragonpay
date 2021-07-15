@@ -11,6 +11,7 @@
 
 namespace Crazymeeks\Foundation\Adapter;
 
+use Exception;
 use Crazymeeks\Foundation\Exceptions\SendBillingInfoException;
 
 /**
@@ -48,11 +49,12 @@ class SoapClientAdapter
     {
        
         if (! \class_exists(\SoapClient::class)) {
-            throw new \Exception('SoapClient class not found. Please install it.');
+            throw new Exception('SoapClient class not found. Please install it.');
         }
 		$wsdl = new \SoapClient($url, $parameters);
 
         $result = $wsdl->SendBillingInfo($this->billing_info_parameters)->SendBillingInfoResult;
+        
         if ($result != 0) {
             throw new SendBillingInfoException("Dragonpay responded an error code " . $result . " when sending billing info. Please check your parameter or contact Dragonpay directly.");
         }

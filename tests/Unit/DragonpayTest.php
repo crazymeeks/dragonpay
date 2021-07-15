@@ -11,6 +11,7 @@
 
 namespace Tests\Unit;
 
+use stdClass;
 use Tests\TestCase;
 use Ixudra\Curl\CurlService;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay;
@@ -26,7 +27,8 @@ use Crazymeeks\Foundation\PaymentGateway\DragonPay\Action\CheckTransactionStatus
 class DragonpayTest extends TestCase
 {
 
-    private $merchant_account;
+    protected $merchant_account;
+    protected $soapAdapterMock;
 
     public function setUp()
     {
@@ -36,6 +38,23 @@ class DragonpayTest extends TestCase
             'merchantid' => !is_null(getenv('MERCHANT_ID')) ? getenv('MERCHANT_ID') : 'MERCHANTID' ,
             'password' => !is_null(getenv('MERCHANT_KEY')) ? getenv('MERCHANT_KEY') : 'PASSWORD',
         ];
+
+        $this->mockSoapClient();
+    }
+
+    protected function mockSoapClient($expected = 'success')
+    {
+        $stdClass = new stdClass();
+
+        $response = [
+            'success' => json_decode(json_encode(['GetTxnTokenResult' => '039430493493490'])),
+            'error' => json_decode(json_encode(['GetTxnTokenResult' => 201])),
+        ];
+
+        $this->soapAdapterMock = \Mockery::mock(SoapClientAdapter::class);
+        $this->soapAdapterMock->shouldReceive('GetTxnToken')
+                        ->with(\Mockery::any())
+                        ->andReturn($response[$expected]);
     }
 
     /**
@@ -105,12 +124,14 @@ class DragonpayTest extends TestCase
      */
     public function it_should_set_request_token_parameters($parameters)
     {
+        
         $dragonpay = new Dragonpay($this->merchant_account);
 
         $parameters['txnid'] = 'TXNID-' . rand();
-        
+
         $token = $dragonpay->getToken(
-            $parameters
+            $parameters,
+            $this->soapAdapterMock
         );
         
         $this->assertInstanceof(Token::class, $token);
@@ -126,8 +147,10 @@ class DragonpayTest extends TestCase
     {
         $dragonpay = new Dragonpay($this->merchant_account);
         $parameters['merchantid'] = 'invalidmerchantid';
+        $this->mockSoapClient('error');
         $token = $dragonpay->getToken(
-            $parameters
+            $parameters,
+            $this->soapAdapterMock
         );
 
     }
@@ -149,7 +172,8 @@ class DragonpayTest extends TestCase
 
         try{
             $token = $dragonpay->getToken(
-                $parameters
+                $parameters,
+                $this->soapAdapterMock
             );
         }catch( PaymentException $e ){
             $this->assertEquals($e->getMessage(), $dragonpay->seeError());
@@ -209,7 +233,8 @@ class DragonpayTest extends TestCase
         $parameters['txnid'] = 'TXNID-' . rand();
         
         $token = $dragonpay->getToken(
-            $parameters
+            $parameters,
+            $this->soapAdapterMock
         );
         
         $dragonpay->filterPaymentChannel( Dragonpay::CREDIT_CARD );
@@ -290,7 +315,7 @@ class DragonpayTest extends TestCase
         $parameters['merchantid'] = getenv('MERCHANT_ID');
         $parameters['password'] = getenv('MERCHANT_KEY');
         $parameters['txnid'] = 'TXNID-' . rand();
-
+        
         $dragonpay->useCreditCard($parameters, $verifier, $soap);
         
         $url = $dragonpay->away( true );
@@ -311,7 +336,7 @@ class DragonpayTest extends TestCase
      */
     public function it_should_pay_using_credit_card_with_requested_token($parameters)
     {
-        $dragonpay = new Dragonpay($this->merchant_account);
+        $dragonpay = new Dragonpay($this->merchant_account, false);
 
         $verifier = \Mockery::mock(BillingInfoVerifier::class);
         $soap = \Mockery::mock(SoapClientAdapter::class);
@@ -350,10 +375,9 @@ class DragonpayTest extends TestCase
         $soap_adapter->shouldReceive('GetTxnToken')
                      ->with($dragonpay->parameters->prepareRequestTokenParameters($parameters))
                      ->andReturn($getTokenReturn);
-
-
+        
         $token = $dragonpay->useCreditCard($parameters, $verifier, $soap)
-                  ->getToken($parameters, $soap_adapter);
+                           ->getToken($parameters, $soap_adapter);
         
         $url = $dragonpay->away( true );
         $url = parse_url($url);
@@ -433,7 +457,7 @@ class DragonpayTest extends TestCase
         $soap_adapter->shouldReceive('GetAvailableProcessors')
                      ->with(\Mockery::any())
                      ->andReturn($response);
-
+        
         $processors = $dragonpay->getPaymentChannels(Dragonpay::ALL_PROCESSORS, $soap_adapter);
 
         $this->assertObjectHasAttribute('procId', $processors[0]);
@@ -460,51 +484,6 @@ class DragonpayTest extends TestCase
         $this->assertObjectHasAttribute('surcharge', $processors[0]);
         $this->assertObjectHasAttribute('hasAltRefNo', $processors[0]);
         $this->assertObjectHasAttribute('cost', $processors[0]);
-    }
-
-    /**
-     * Instead of redirecting user's browser to DP,
-     * merchant can perform background HTTP GET and
-     * retrieve the instructions programmatically as
-     * JSON for customized displaying.
-     *
-     * test
-     * dataProvider Tests\DataProviders\DragonpayDataProvider::getAllPaymentChannels()
-     */
-    public function it_should_retrieve_instruction_using_background_process_to_customize_checkout_page($response, $parameters)
-    {
-        
-        echo '@todo:: ' . __METHOD__;
-        $this->assertTrue(true);
-        /*$dragonpay = new Dragonpay();
-        
-        $options['merchantId'] = getenv('MERCHANT_ID') ? getenv('MERCHANT_ID') : 'MERCHANT_ID';
-        $options['password'] = getenv('MERCHANT_KEY') ? getenv('MERCHANT_KEY') : 'MERCHANT_KEY';
-        $options['amount'] = Dragonpay::ALL_PROCESSORS; // this is optional
-
-        $parameters['merchantid'] = $options['merchantId'];
-        $parameters['password'] = $options['password'];
-        $parameters['txnid'] = uniqid();
-
-        $soap_adapter = \Mockery::mock(SoapClientAdapter::class);
-        $soap_adapter->shouldReceive('GetAvailableProcessors')
-                     ->with($options)
-                     ->andReturn($response);
-
-        $processors = $dragonpay->setParameters($parameters)->getPaymentChannels($options, $soap_adapter);
-        
-        $payment_instruction = $dragonpay->silent([
-            'procid' => $processors[0]->procId,
-            'mustRedirect' => $processors[0]->mustRedirect,
-            'testing'      => true,
-        ]);*/
-
-        // $obj = new \stdClass();
-        // $obj->procid = 'BDO';
-        // $obj->mustRedirect = true;
-
-        // $payment_instruction = $dragonpay->silent($obj);
-
     }
 
     /**
@@ -650,7 +629,8 @@ class DragonpayTest extends TestCase
         $parameters['txnid'] = 'TXNID-' . rand();
         
         $token = $dragonpay->getToken(
-            $parameters
+            $parameters,
+            $this->soapAdapterMock
         );
         
         $url = $dragonpay->withProcid($processors[0]->procId)->away( true );
