@@ -14,19 +14,19 @@
 	<a href="https://github.com/crazymeeks/dragonpay/network"><img src="https://img.shields.io/github/forks/crazymeeks/dragonpay.svg?style=social&label=Fork" alt="Fork"></a>
 </h1>
 
-## Welcome to Dragonpay 3.2.8 wiki!  
+## # Welcome to Dragonpay 3.2.8 wiki!  
   
 This library will help you integrate your application with Dragonpay payment gateway. 
 
-## Bug Fix
+## # Bug Fix
 * Fixed composer 2 deprecation notice!
 * Update Web Service Production URL
 
-### Requirements:  
+### # Requirements:  
 * PHP >=7.1
 * SoapClient
 
-### In this page
+### # In this page
 * `Getting Started`
 * `SOAP/XML Web Service Model`
 * `Using Credit Card`
@@ -42,7 +42,7 @@ This library will help you integrate your application with Dragonpay payment gat
 
 ***
 
-### Getting Started  
+### # Getting Started  
 1. Download library version **v3.2.8** using composer:  
  `composer require crazymeeks/dragonpay v3.2.8`  
 2. After downloading, use the` Dragonpay` class anywhere in your code:  
@@ -50,7 +50,7 @@ This library will help you integrate your application with Dragonpay payment gat
 
 ***
 
-### Example  
+### # Example  
 ```php
 <?php
 
@@ -89,7 +89,7 @@ class ExampleClass
 ```  
 
 ***
-### SOAP/XML Web Service Model(Recommended)   
+### # SOAP/XML Web Service Model(Recommended)   
 For **GREATER SECURITY**, you can use the API using XML Web Service Model. Under this model, the parameters are not passed through browser redirect which are visible to end-users. Instead parameters are exchanged directly between the Merchant site and Payment Switch servers through SOAP calls. The PS will return a token which you will be used to redirect to PS.  
 Just make sure you have `SoapClient` enabled/installed on your system and call `getToken()` method.  
  You can do it by:  
@@ -137,7 +137,7 @@ class ExampleClass
 ```  
 
 ***
-### Using Credit Card  
+### # Using Credit Card  
 To use credit card payment, please make sure you have SoapClient installed/enabled on your system and make call to `useCreditCard($parameters)` method. This method will throw `Crazymeeks\Foundation\Exceptions\SendBillingInfoException` when error occurred.  
 
 **Note:** credit card is only available in production.  
@@ -194,8 +194,8 @@ class ExampleClass
 ```  
 
 ***
-### Filtering Payment Channels  
-##### Available payment channels:  
+### # Filtering Payment Channels  
+##### # Available payment channels:  
 * `Dragonpay::ONLINE_BANK`
 * `Dragonpay::OTC_BANK`
 * `Dragonpay::OTC_NON_BANK`
@@ -245,7 +245,7 @@ class ExampleClass
 ```  
 
 ***
-### Pre-selecting Payment Channels
+### # Pre-selecting Payment Channels
 If you want to go directly to a payment channel without having to select from the dropdown list and without stopping by the Dragonpay selection page, you can chain call the `withProcid($procid)` method. This method will throw `Crazymeeks\Foundation\Exceptions\InvalidProcessIdException` when processor id is not supported.  
 **Available Processors:**  
 * `Processor::CREDIT_CARD`
@@ -310,7 +310,7 @@ class ExampleClass
 }
 
 ```
-### Payment Mode
+### # Payment Mode
   
 By default, the payment mode of this library is sandbox. To change this to production, just pass boolean `false` to second parameter of Constructor of `Crazymeeks\Foundation\PaymentGateway\Dragonpay`.  
 ```php
@@ -325,7 +325,7 @@ By default, the payment mode of this library is sandbox. To change this to produ
         $dragonpay = new Dragonpay($merchant_account, $testing);
 ```
 ***
-### Exceptions
+### # Exceptions
   
 You can wrap your code in a `try{}catch(){}` and use `Crazymeeks\Foundation\Exceptions\PaymentException` so you can catch error and see error message safely when something went wrong.  
 ```php
@@ -372,7 +372,7 @@ class ExampleClass
 ```
 
 ***
-### Postback handler
+### # Postback handler
 According to DP's official documentation, _postback URL_ is invoked directly by the PS and does not expect any return value. PS will invoke the _postback URL_ first before the browser redirect to the _return URL_. Thus, the ideal process flow is: upon receiving the
 postback URL call, the merchant’s system performs the necessary database updates
 and initiate whatever back-end process is required. Then when it receives the return
@@ -394,7 +394,7 @@ array(
 )
 
 ```  
-##### Usage:    
+##### # Usage:    
 Using closure/anonymous function:    
 ```php
 <?php
@@ -454,7 +454,7 @@ Returns:
    The return of the callback
 
 ***
-### Cancellation of Transaction
+### # Cancellation of Transaction
 To cancel a transaction, just call `action()` method and pass object of `Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\CancelTransaction` with transaction id as constructor parameter. `action()` method will throw `Crazymeeks\Foundation\Exceptions\Action\CancelTransactionException` when error occured.
 ```php
 <?php
@@ -471,7 +471,7 @@ try{
 }
 ```
 ***
-### Transaction Status Inquiry
+### # Transaction Status Inquiry
 If you want to check transaction status, just call `action()` method of pass object of `Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\CheckTransactionStatus` with transaction id as constructor parameter.  This will return either one of the following status:  
 - Success
 - Failure
@@ -496,7 +496,7 @@ $status = $dragonpay->action(new \Crazymeeks\Foundation\PaymentGateway\Dragonpay
 
 ```
 ***
-### Advanced Control
+### # Advanced Control
 Please read Dragonpay's official docs [here](https://www.dragonpay.ph/wp-content/uploads/Dragonpay-PS-API-v2-latest.pdf) then read through 5.4.2 Advanced Control
 ```php
 
@@ -574,14 +574,14 @@ a list of channels available for that amount. But if you want to retrieve the fu
 regardless of the amount so you can cache it locally and avoid having to calling the
 web method for each transaction, you can set amount to `Dragonpay::ALL_PROCESSORS`.
 ***
-### Tips
+### # Tips
 Do not use email domain `@example.com`. It seems the Payment switch does not accept it.  
   
-### Miscellaneous
+### # Miscellaneous
 If you found any security issues or bugs, it will be a big help if you raise an issue or email the author directly and will address it right away.  
 I encourage you to contribute in this package. Just create pull request. `#sharingiscaring`
 
-##### Author
+##### # Author
 Jeff Claud
 
 
