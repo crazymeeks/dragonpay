@@ -576,7 +576,7 @@ regardless of the amount so you can cache it locally and avoid having to calling
 web method for each transaction, you can set amount to `Dragonpay::ALL_PROCESSORS`.
 ***
 ### # Updating payment url and web service url
-If for some intance Dragonpay updated their payment and web service url(mostly like will not happen).  
+If for some intance Dragonpay updated their payment and web service url(mostly likely will not happen).  
 __Payment URL__ is the url where customer will be redirected to process and complete payment.  
 __Web Service URL__ is the url where we request token.  
 __Send Billing Info URL__ sending billing info for billing info for credit card payment
