@@ -209,7 +209,7 @@ class DragonpayTest extends TestCase
             $parameters
         );
         $dragonpay->filterPaymentChannel(Dragonpay::ONLINE_BANK);
-        $url = $dragonpay->away( true );
+        $url = $dragonpay->away(true);
         
         $url = parse_url($url);
         
@@ -238,7 +238,7 @@ class DragonpayTest extends TestCase
         );
         
         $dragonpay->filterPaymentChannel( Dragonpay::CREDIT_CARD );
-        $url = $dragonpay->away( true );
+        $url = $dragonpay->away(true);
         
         $url = parse_url($url);
         $query_params = explode('=', $url['query']);

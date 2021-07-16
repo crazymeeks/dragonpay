@@ -12,6 +12,8 @@
 namespace Crazymeeks\Foundation\PaymentGateway;
 
 use Ixudra\Curl\CurlService;
+use Crazymeeks\Contracts\DigestInterface;
+use Crazymeeks\Contracts\PaymentGatewayInterface;
 use Crazymeeks\Foundation\PaymentGateway\RequestBag;
 use Crazymeeks\Foundation\Adapter\SoapClientAdapter;
 use Crazymeeks\Foundation\PaymentGateway\Parameters;
@@ -23,7 +25,6 @@ use Crazymeeks\Foundation\Exceptions\InvalidPostbackInvokerException;
 use Crazymeeks\Foundation\Exceptions\NoAvailablePaymentChannelsException;
 use Crazymeeks\Foundation\PaymentGateway\Handler\PostbackHandlerInterface;
 use Crazymeeks\Foundation\PaymentGateway\DragonPay\Action\ActionInterface;
-use Crazymeeks\Contracts\Foundation\PaymentGateway\PaymentGatewayInterface;
 
 class Dragonpay implements PaymentGatewayInterface
 {
@@ -249,14 +250,18 @@ class Dragonpay implements PaymentGatewayInterface
      * Constructor
      * 
      * @param array $merchant_account
-     *
+     * @param bool $sandbox
+     * @param \Crazymeeks\Contracts\DigestInterface $digestor|null
      */
-    public function __construct(array $merchant_account, $sandbox = true)
+    public function __construct(
+        array $merchant_account,
+        $sandbox = true,
+        DigestInterface $digestor = null
+    )
     {
-
         $this->request = new RequestBag();
         $this->channels = new PaymentChannels();
-        $this->parameters = new Parameters($this);
+        $this->parameters = new Parameters($this, $digestor);
         $this->parameters->add($merchant_account);
         $this->setMerchantAccount($merchant_account);
         $this->is_sandbox = $sandbox;
@@ -394,7 +399,7 @@ class Dragonpay implements PaymentGatewayInterface
     private function throwException($code)
     {  
         $this->setDebugMessage($this->error_codes[$code]);
-        $exception = "Crazymeeks\Foundation\Exceptions\\" . $this->getExceptionClass( $code );
+        $exception = "Crazymeeks\Foundation\Exceptions\\" . $this->getExceptionClass($code);
         throw new $exception($this->seeError());
     }
 
@@ -592,7 +597,7 @@ class Dragonpay implements PaymentGatewayInterface
      *
      * @return $this
      */
-    public function setPaymentUrl( $url)
+    public function setPaymentUrl($url)
     {
         if ($this->getPaymentMode() === 'sandbox') {
             $this->baseUrl[self::SANDBOX] = $url;
@@ -742,37 +747,6 @@ class Dragonpay implements PaymentGatewayInterface
     {
         return $action->doAction($this, $curl);
     }
-
-
-    /**
-     * Get array representation of \stdClass object
-     *
-     * @param object|array $options
-     * 
-     * @return array
-     */
-    private function getArray($options)
-    {
-        if ($options instanceof \stdClass) {
-            if (!property_exists($options, 'procid') || !property_exists($options, 'mustRedirect')) {
-                throw new \InvalidArgumentException("{procid} and {mustRedirect} property must be provided.");
-            }
-
-            $options = [
-                'procid' => $options->procid,
-                'mustRedirect' => $options->mustRedirect,
-            ];
-        } else {
-
-            $options = (array) $options;
-            
-            if (!array_key_exists('procid', $options) || !array_key_exists('mustRedirect', $options)) {
-                throw new \InvalidArgumentException("{procid} and {mustRedirect} keys must be provided.");
-            }
-        }
-        return $options;
-    }
-
 
     /**
      * Get payment payment url of either sandbox or production

@@ -21,7 +21,7 @@ class InvalidArrayParameterException extends PaymentException
         parent::__construct($message, $code);
     }
 
-    public function invalid_array_key()
+    public static function invalid_array_key()
     {
         return new static("Missing required array key/s. Please check your key/s.", 400);
     }

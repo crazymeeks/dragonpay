@@ -9,20 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Crazymeeks\Encryption;
+namespace Crazymeeks\Contracts;
 
-use Crazymeeks\Contracts\DigestInterface;
-
-class Sha1Encryption implements DigestInterface
+interface PaymentGatewayInterface
 {
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public function make(array $data)
-	{
-		$digest = sha1(implode(':', $data));
-		return $digest;
-	}
+	public function setRequestParameters(array $params);
 }

@@ -38,6 +38,7 @@ This library will help you integrate your application with Dragonpay payment gat
 * `Cancellation of Transaction`
 * `Transaction Status Inquiry`
 * `Advanced Control`
+* `Updating payment url and web service url`
 * `Tips`
 
 ***
@@ -362,7 +363,7 @@ class ExampleClass
         try {
               $dragonpay->setParameters($parameters)->away();
         } catch(PaymentException $e){
-             echo $e->getMessage();exit;
+             echo $e->getMessage();
         } catch(\Exception $e){
              echo $e->getMessage();
         }
@@ -379,7 +380,7 @@ and initiate whatever back-end process is required. Then when it receives the re
 URL call, it counter-checks the status in the database and provides the visual
 response. If merchant does not provide both callback URL’s, PS will only invoke the
 one provided. **Please keep in mind the HTTP method of your postback URL should be POST($_POST) not GET($_GET).**   
-![screenshot for instruction](/crazymeeks/dragonpay/blob/master/postbackURL.png)  
+![screenshot for instruction](https://github.com/crazymeeks/dragonpay/blob/master/postbackURL.png)  
 This library provides simple feature for this out of the box so you can handle data when PS invoked your _postback URL._ Just call `handlePostback()` method. `handlePostback()` will return the following array so you can do whatever you want to this returned data:  
 ```php
 <?php
@@ -573,6 +574,35 @@ Note: If an amount value greater than zero is passed, it will return
 a list of channels available for that amount. But if you want to retrieve the full list
 regardless of the amount so you can cache it locally and avoid having to calling the
 web method for each transaction, you can set amount to `Dragonpay::ALL_PROCESSORS`.
+***
+### # Updating payment url and web service url
+If for some intance Dragonpay updated their payment and web service url(mostly like will not happen).  
+__Payment URL__ is the url where customer will be redirected to process and complete payment.  
+__Web Service URL__ is the url where we request token.  
+__Send Billing Info URL__ sending billing info for billing info for credit card payment
+```php
+$merchant_account = [
+   'merchantid' => 'MERCHANTID',
+   'password'   => 'MERCHANT_KEY'
+];
+$dragonpay = new Dragonpay($merchant_account);
+
+// Payment Url
+$newPaymentUrl = "https://test.dp.com/Pay.aspx";
+// Web Service Url
+$newWebSrvcUrl = "https://test.dp.com/WebService.aspx";
+$newBillingInfoUrl = "https://test.dp.com/WebServiceBilling.aspx";
+$dragonpay->setPaymentUrl($newPaymentUrl)
+          ->setBillingInfoUrl($newBillingInfoUrl)
+          ->setWebServiceUrl($newWebSrvcUrl);
+```  
+**Note:** The code above will change the api urls of the sandbox. You just need to pass `boolean false`  
+as 2nd parameter of `Dragonpay` class.  
+It should look like this:
+```php
+$is_sandbox = false;
+$dragonpay = new Dragonpay($merchant_account, $is_sandbox);
+```
 ***
 ### # Tips
 Do not use email domain `@example.com`. It seems the Payment switch does not accept it.  

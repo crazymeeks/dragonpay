@@ -23,7 +23,7 @@ class BillingInfoVerifier
     /**
      * Hook to Dragonpay billing info
      *
-     * @return void
+     * @return boolean
      */
     public function send(SoapClientAdapter $soap, $url)
     {
@@ -43,10 +43,11 @@ class BillingInfoVerifier
      *
      * @param Crazymeeks\Foundation\PaymentGateway\Parameters $parameter
      * 
-     * @return void
+     * @return $this
      */
     public function setParameterObject(Parameters $parameter)
     {
         $this->parameters = $parameter;
+        return $this;
     }
 }

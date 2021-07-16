@@ -9,9 +9,18 @@
  * file that was distributed with this source code.
  */
 
-namespace Crazymeeks\Contracts\Foundation\PaymentGateway;
+namespace Crazymeeks\Contracts;
 
-interface PaymentGatewayInterface
+interface DigestInterface
 {
-	public function setRequestParameters(array $params);
+
+
+    /**
+     * Create digest
+     *
+     * @param array $data The data needs to be encrypted
+     * 
+     * @return mixed
+     */
+    public function make(array $data);
 }

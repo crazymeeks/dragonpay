@@ -11,6 +11,8 @@
 
 namespace Crazymeeks\Foundation\PaymentGateway;
 
+use Crazymeeks\Encryption\Sha1Encryption;
+use Crazymeeks\Contracts\DigestInterface;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay;
 use Crazymeeks\Foundation\PaymentGateway\DragonPay\Token;
 use Crazymeeks\Foundation\Exceptions\InvalidArrayParameterException;
@@ -90,14 +92,21 @@ class Parameters
 	 */
 	private $dragonpay;
 
+	protected $digestor;
+
 	/**
 	 * Constructor
 	 * 
-	 * @param Crazymeeks\Foundation\PaymentGateway\Dragonpay
+	 * @param \Crazymeeks\Foundation\PaymentGateway\Dragonpay
+	 * @param \Crazymeeks\Contracts\DigestInterface
 	 */
-	public function __construct(Dragonpay $dragonpay)
+	public function __construct(
+		Dragonpay $dragonpay,
+		DigestInterface $digestor = null
+	)
 	{
 		$this->dragonpay = $dragonpay;
+		$this->digestor = is_null($digestor) ? new Sha1Encryption() : $digestor;
 	}
 
     /**
@@ -130,21 +139,13 @@ class Parameters
 		
 		$_parameters = array_filter($_parameters);
 		
-		$_parameters['digest'] = $this->createDigest($_parameters);
+		$_parameters['digest'] = $this->digestor->make($_parameters);
 		
 		unset($parameters['password'], $_parameters['password']);
 		$_parameters[Parameters::REQUEST_PARAM_PARAM1] = isset($parameters[Parameters::REQUEST_PARAM_PARAM1]) ? $parameters[Parameters::REQUEST_PARAM_PARAM1] : '';
 		$_parameters[Parameters::REQUEST_PARAM_PARAM2] = isset($parameters[Parameters::REQUEST_PARAM_PARAM2]) ? $parameters[Parameters::REQUEST_PARAM_PARAM2] : '';
 		
-		return $this->parameters = array_filter( $_parameters );
-	}
-
-	private function createDigest(array $parameters)
-	{	
-		$digest = sha1(implode(':', $parameters));
-
-		return $digest;
-
+		return $this->parameters = array_filter($_parameters);
 	}
 
     /**
@@ -222,11 +223,12 @@ class Parameters
 	 *
 	 * @param array $parameters
 	 * 
-	 * @return void
+	 * @return $this
 	 */
 	public function add(array $parameters)
 	{
 		$this->parameters =  array_merge($this->parameters, (array) $parameters);
+		return $this;
 	}
 
     /**
@@ -246,7 +248,6 @@ class Parameters
 		}
 
 		if ($this->dragonpay->token instanceof Token) {
-			
 			if (isset($parameters['mode'])) {
 				$parameters = ['tokenid' => $this->dragonpay->token->getToken(),'mode' => $parameters['mode']];
 			} elseif(isset($parameters['procid'])) {

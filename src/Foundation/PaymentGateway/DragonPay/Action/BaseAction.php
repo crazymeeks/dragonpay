@@ -13,12 +13,29 @@ namespace Crazymeeks\Foundation\PaymentGateway\DragonPay\Action;
 
 use Ixudra\Curl\CurlService;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay;
-use Crazymeeks\Foundation\Adapter\SoapClientAdapter;
 use Crazymeeks\Foundation\PaymentGateway\DragonPay\Action\ActionInterface;
 
 abstract class BaseAction implements ActionInterface
 {
 
+    /**
+     * Dragonpay transaction id
+     *
+     * @var string
+     */
+    protected $txnid;
+
+
+    /**
+     * Constructor
+     * 
+     * @param string $txnid  Dragonpay transaction id
+     * 
+     */
+    public function __construct($txnid)
+    {
+        $this->txnid = $txnid;
+    }
 
     /**
      * Transaction operation
@@ -39,13 +56,12 @@ abstract class BaseAction implements ActionInterface
 
         $merchant_account = $dragonpay->getMerchantAccount();
 
+        $url = str_replace('/Pay.aspx', '', rtrim($dragonpay->getBaseUrlOf($dragonpay->getPaymentMode()), '/') . '/' . $this->getActionName() . '?op=' . $this->getOp() . '&');
         
-        $url = str_replace('/Pay.aspx', '', rtrim($dragonpay->getBaseUrlOf($dragonpay->getPaymentMode()), '/') . '/' . $this->name . '?op=' . $this->getOp() . '&');
-
         $parameters = [
             'merchantid' => $merchant_account['merchantid'],
             'merchantpwd' => $merchant_account['password'],
-            'txnid' => $this->txnid,
+            'txnid' => $this->getTransactionId(),
         ];
 
         $url = $url . http_build_query($parameters);
@@ -55,5 +71,23 @@ abstract class BaseAction implements ActionInterface
                        
         return $result;
 
+    }
+
+    /**
+     * Get transaction id
+     *
+     * @return string
+     */
+    protected function getTransactionId()
+    {
+        return $this->txnid;
+    }
+
+    /**
+     * Get Dragonpay web service name
+     */
+    protected function getActionName()
+    {
+        return 'MerchantRequest.aspx';
     }
 }
