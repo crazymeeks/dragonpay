@@ -1,0 +1,11 @@
+Change Log
+------------
+
+**v3.2.8**
+ - Fixed composer 2 deprecation notice
+ - Update Web Service Production URL
+
+**v3.2.9**
+ - Refactored codebase
+ - Allowed changing payment url, web service url and send billing info url programmatically
+ - Can now get all available processors.

@@ -1,0 +1,776 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Quickstart &mdash; Dragonpay v3.2.9 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Overview" href="overview.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Dragonpay
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#making-your-first-payment">Making your first payment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#soap-xml-web-service-model-recommended">SOAP/XML Web Service Model(Recommended)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-credit-card">Using Credit Card</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#filtering-payment-channels">Filtering Payment Channels</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pre-selecting-payment-channels">Pre-selecting Payment Channels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#payment-mode">Payment Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exceptions">Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#postback-handler">Postback handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cancellation-of-transaction">Cancellation of Transaction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transaction-status-inquiry">Transaction Status Inquiry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-control">Advanced Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#updating-payment-url-and-web-service-url">Updating payment url and web service url</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tips">Tips</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#miscellaneous">Miscellaneous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#author">Author</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Dragonpay</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Quickstart</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/quickstart.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="quickstart">
+<h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h1>
+<p>This page provide a quick introduction on how to use Dragonpay library.
+If you have not already installed Dragonpay, go check the <a class="reference internal" href="overview.html#installation"><span class="std std-ref">Installation</span></a> page</p>
+<div class="section" id="making-your-first-payment">
+<h2>Making your first payment<a class="headerlink" href="#making-your-first-payment" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="nx">YourNameSpace</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Crazymeeks\Foundation\PaymentGateway\Dragonpay</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ExampleClass</span>
+<span class="p">{</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">postCheckout</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$parameters</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;txnid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;TXNID&#39;</span><span class="p">,</span> <span class="c1"># Varchar(40) A unique id identifying this specific transaction from the merchant site</span>
+            <span class="s1">&#39;amount&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># Numeric(12,2) The amount to get from the end-user (XXXX.XX)</span>
+            <span class="s1">&#39;ccy&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;PHP&#39;</span><span class="p">,</span> <span class="c1"># Char(3) The currency of the amount</span>
+            <span class="s1">&#39;description&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Test&#39;</span><span class="p">,</span> <span class="c1"># Varchar(128) A brief description of what the payment is for</span>
+            <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;some@merchant.ph&#39;</span><span class="p">,</span> <span class="c1"># Varchar(40) email address of customer</span>
+            <span class="s1">&#39;param1&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;param1&#39;</span><span class="p">,</span> <span class="c1"># Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed</span>
+            <span class="s1">&#39;param2&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;param2&#39;</span><span class="p">,</span> <span class="c1"># Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed</span>
+
+        <span class="p">];</span>
+
+
+        <span class="nv">$merchant_account</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;merchantid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANTID&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;password&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANT_KEY&#39;</span>
+        <span class="p">];</span>
+        <span class="c1">// Initialize Dragonpay</span>
+        <span class="nv">$dragonpay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dragonpay</span><span class="p">(</span><span class="nv">$merchant_account</span><span class="p">);</span>
+        <span class="c1">// Set parameters, then redirect to dragonpay</span>
+        <span class="nv">$dragonpay</span><span class="o">-&gt;</span><span class="na">setParameters</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">away</span><span class="p">();</span>
+
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="soap-xml-web-service-model-recommended">
+<h2>SOAP/XML Web Service Model(Recommended)<a class="headerlink" href="#soap-xml-web-service-model-recommended" title="Permalink to this headline">¶</a></h2>
+<p>For <strong>GREATER SECURITY</strong>, you can use the API using XML Web Service Model. Under this model, the parameters are not passed through browser redirect which are visible to end-users. Instead parameters are exchanged directly between the Merchant site and Payment Switch servers through SOAP calls. The PS will return a token which you will be used to redirect to PS.
+Just make sure you have <code class="docutils literal notranslate"><span class="pre">SoapClient</span></code> enabled/installed on your system and call <code class="docutils literal notranslate"><span class="pre">getToken()</span></code> method.</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="nx">YourNameSpace</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Crazymeeks\Foundation\PaymentGateway\Dragonpay</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Crazymeeks\Foundation\PaymentGateway\Dragonpay\Token</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ExampleClass</span>
+<span class="p">{</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">postCheckout</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$parameters</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;txnid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;TXNID&#39;</span><span class="p">,</span> <span class="c1"># Varchar(40) A unique id identifying this specific transaction from the merchant site</span>
+            <span class="s1">&#39;amount&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># Numeric(12,2) The amount to get from the end-user (XXXX.XX)</span>
+            <span class="s1">&#39;ccy&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;PHP&#39;</span><span class="p">,</span> <span class="c1"># Char(3) The currency of the amount</span>
+            <span class="s1">&#39;description&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Test&#39;</span><span class="p">,</span> <span class="c1"># Varchar(128) A brief description of what the payment is for</span>
+            <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;some@merchant.ph&#39;</span><span class="p">,</span> <span class="c1"># Varchar(40) email address of customer</span>
+            <span class="s1">&#39;param1&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;param1&#39;</span><span class="p">,</span> <span class="c1"># Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed</span>
+            <span class="s1">&#39;param2&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;param2&#39;</span><span class="p">,</span> <span class="c1"># Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed</span>
+
+        <span class="p">];</span>
+
+        <span class="nv">$merchant_account</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;merchantid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANTID&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;password&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANT_KEY&#39;</span>
+        <span class="p">];</span>
+        <span class="c1">// Initialize Dragonpay</span>
+        <span class="nv">$dragonpay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dragonpay</span><span class="p">(</span><span class="nv">$merchant_account</span><span class="p">);</span>
+        <span class="c1">// Get token from Dragonpay</span>
+        <span class="nv">$token</span> <span class="o">=</span> <span class="nv">$dragonpay</span><span class="o">-&gt;</span><span class="na">getToken</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">);</span>
+        <span class="c1">// If $token instance of Crazymeeks\Foundation\PaymentGateway\Dragonpay\Token, then proceed</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="nv">$token</span> <span class="nx">instanceof</span> <span class="nx">Token</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$dragonpay</span><span class="o">-&gt;</span><span class="na">away</span><span class="p">();</span>
+        <span class="p">}</span>
+
+
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-credit-card">
+<h2>Using Credit Card<a class="headerlink" href="#using-credit-card" title="Permalink to this headline">¶</a></h2>
+<p>To use credit card payment, please make sure you have SoapClient installed/enabled on your system and make call to <code class="docutils literal notranslate"><span class="pre">useCreditCard($parameters)</span></code> method. This method will throw <code class="docutils literal notranslate"><span class="pre">Crazymeeks\Foundation\Exceptions\SendBillingInfoException</span></code> when error occurred.
+<strong>Note:</strong> credit card is only available in production.</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="nx">YourNameSpace</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Crazymeeks\Foundation\PaymentGateway\Dragonpay</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Crazymeeks\Foundation\PaymentGateway\Dragonpay\Token</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ExampleClass</span>
+<span class="p">{</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">postCheckout</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$parameters</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;txnid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;TXNID&#39;</span><span class="p">,</span> <span class="c1"># Varchar(40) A unique id identifying this specific transaction from the merchant site</span>
+            <span class="s1">&#39;amount&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># Numeric(12,2) The amount to get from the end-user (XXXX.XX)</span>
+            <span class="s1">&#39;ccy&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;PHP&#39;</span><span class="p">,</span> <span class="c1"># Char(3) The currency of the amount</span>
+            <span class="s1">&#39;description&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Test&#39;</span><span class="p">,</span> <span class="c1"># Varchar(128) A brief description of what the payment is for</span>
+            <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;some@merchant.ph&#39;</span><span class="p">,</span> <span class="c1"># Varchar(40) email address of customer</span>
+            <span class="s1">&#39;param1&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;param1&#39;</span><span class="p">,</span> <span class="c1"># Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed</span>
+            <span class="s1">&#39;param2&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;param2&#39;</span><span class="p">,</span> <span class="c1"># Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed</span>
+
+            <span class="s1">&#39;firstName&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;John&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;lastName&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;Doe&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;address1&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;#123 Chocolate Hills&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;address2&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;Sweet Mountain&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;city&#39;</span>      <span class="o">=&gt;</span> <span class="s1">&#39;Hillside&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;state&#39;</span>     <span class="o">=&gt;</span> <span class="s1">&#39;Bohol&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;country&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;PH&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;zipCode&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;1201&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;telNo&#39;</span>     <span class="o">=&gt;</span> <span class="s1">&#39;63 2029&#39;</span><span class="p">,</span>
+        <span class="p">];</span>
+
+        <span class="nv">$merchant_account</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;merchantid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANTID&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;password&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANT_KEY&#39;</span>
+        <span class="p">];</span>
+
+        <span class="nv">$testing</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span> <span class="c1"># Set Payment mode to production</span>
+        <span class="c1">// Initialize Dragonpay</span>
+        <span class="nv">$dragonpay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dragonpay</span><span class="p">(</span><span class="nv">$merchant_account</span><span class="p">,</span> <span class="nv">$testing</span><span class="p">);</span>
+        <span class="nv">$dragonpay</span><span class="o">-&gt;</span><span class="na">useCreditCard</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">away</span><span class="p">();</span>
+
+        <span class="c1"># If you want to use SOAP, just chain call</span>
+        <span class="c1"># getToken($parameters) method like below</span>
+        <span class="c1"># $dragonpay-&gt;useCreditCard($parameters)-&gt;getToken($parameters)-&gt;away();</span>
+
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>If you want to use token(recommended), you can do it using below code:</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="nv">$dragonpay</span><span class="o">-&gt;</span><span class="na">useCreditCard</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">getToken</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">away</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="filtering-payment-channels">
+<h1>Filtering Payment Channels<a class="headerlink" href="#filtering-payment-channels" title="Permalink to this headline">¶</a></h1>
+<p><strong>Available payment channels</strong></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">Dragonpay::ONLINE_BANK</span></code>
+<code class="docutils literal notranslate"><span class="pre">Dragonpay::OTC_BANK</span></code>
+<code class="docutils literal notranslate"><span class="pre">Dragonpay::OTC_NON_BANK</span></code>
+<code class="docutils literal notranslate"><span class="pre">Dragonpay::PAYPAL</span></code>
+<code class="docutils literal notranslate"><span class="pre">Dragonpay::GCASH</span></code>
+<code class="docutils literal notranslate"><span class="pre">Dragonpay::INTL_OTC</span></code></p>
+</div></blockquote>
+<p>Payment Channels are grouped together by type. E.g <code class="docutils literal notranslate"><span class="pre">Online</span> <span class="pre">Banking</span></code>, <code class="docutils literal notranslate"><span class="pre">Over-the-Counter/ATM</span></code>, etc.
+You can set payment channel by calling <code class="docutils literal notranslate"><span class="pre">filterPaymentChannel()</span></code> method and pass one of the available payment channels above.</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="nx">YourNameSpace</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Crazymeeks\Foundation\PaymentGateway\Dragonpay</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ExampleClass</span>
+<span class="p">{</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">postCheckout</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$parameters</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;txnid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;TXNID&#39;</span><span class="p">,</span> <span class="c1"># Varchar(40) A unique id identifying this specific transaction from the merchant site</span>
+            <span class="s1">&#39;amount&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># Numeric(12,2) The amount to get from the end-user (XXXX.XX)</span>
+            <span class="s1">&#39;ccy&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;PHP&#39;</span><span class="p">,</span> <span class="c1"># Char(3) The currency of the amount</span>
+            <span class="s1">&#39;description&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Test&#39;</span><span class="p">,</span> <span class="c1"># Varchar(128) A brief description of what the payment is for</span>
+            <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;some@merchant.ph&#39;</span><span class="p">,</span> <span class="c1"># Varchar(40) email address of customer</span>
+            <span class="s1">&#39;param1&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;param1&#39;</span><span class="p">,</span> <span class="c1"># Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed</span>
+            <span class="s1">&#39;param2&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;param2&#39;</span><span class="p">,</span> <span class="c1"># Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed</span>
+
+        <span class="p">];</span>
+
+        <span class="nv">$merchant_account</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;merchantid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANTID&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;password&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANT_KEY&#39;</span>
+        <span class="p">];</span>
+        <span class="c1">// Initialize Dragonpay</span>
+        <span class="nv">$dragonpay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dragonpay</span><span class="p">(</span><span class="nv">$merchant_account</span><span class="p">);</span>
+        <span class="c1">// Filter payment channel</span>
+        <span class="nv">$dragonpay</span><span class="o">-&gt;</span><span class="na">filterPaymentChannel</span><span class="p">(</span> <span class="nx">Dragonpay</span><span class="o">::</span><span class="na">ONLINE_BANK</span> <span class="p">);</span>
+        <span class="c1">// Set parameters, then redirect to dragonpay</span>
+        <span class="nv">$dragonpay</span><span class="o">-&gt;</span><span class="na">setParameters</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">away</span><span class="p">();</span>
+
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="pre-selecting-payment-channels">
+<h2>Pre-selecting Payment Channels<a class="headerlink" href="#pre-selecting-payment-channels" title="Permalink to this headline">¶</a></h2>
+<p>If you want to go directly to a payment channel without having to select from the dropdown list and without stopping by the Dragonpay selection page, you can chain call the <code class="docutils literal notranslate"><span class="pre">withProcid($procid)</span></code> method. This method will throw <code class="docutils literal notranslate"><span class="pre">Crazymeeks\Foundation\Exceptions\InvalidProcessIdException</span></code> when processor id is not supported.</p>
+<p><strong>Available Processors:</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">Processor::CREDIT_CARD</span></code>
+<code class="docutils literal notranslate"><span class="pre">Processor::GCASH</span></code>
+<code class="docutils literal notranslate"><span class="pre">Processor::PAYPAL</span></code>
+<code class="docutils literal notranslate"><span class="pre">Processor::BAYADCENTER</span></code>
+<code class="docutils literal notranslate"><span class="pre">Processor::BITCOIN</span></code>
+<code class="docutils literal notranslate"><span class="pre">Processor::CEBUANA_LHUILLIER</span></code>
+<code class="docutils literal notranslate"><span class="pre">Processor::CHINA_UNIONPAY</span></code>
+<code class="docutils literal notranslate"><span class="pre">Processor::DRAGONPAY_PREPARED_CREDITS</span></code>
+<code class="docutils literal notranslate"><span class="pre">Processor::ECPAY</span></code>
+<code class="docutils literal notranslate"><span class="pre">Processor::LBC</span></code>
+<code class="docutils literal notranslate"><span class="pre">Processor::MLHUILLIER</span></code>
+<code class="docutils literal notranslate"><span class="pre">Processor::ROBINSONS_DEPT_STORE</span></code>
+<code class="docutils literal notranslate"><span class="pre">Processor::SM_PAYMENT_COUNTERS</span></code></p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="nx">YourNameSpace</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Crazymeeks\Foundation\PaymentGateway\Dragonpay</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Crazymeeks\Foundation\PaymentGateway\Options\Processor</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ExampleClass</span>
+<span class="p">{</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">postCheckout</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$parameters</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;txnid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;TXNID&#39;</span><span class="p">,</span> <span class="c1"># Varchar(40) A unique id identifying this specific transaction from the merchant site</span>
+            <span class="s1">&#39;amount&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># Numeric(12,2) The amount to get from the end-user (XXXX.XX)</span>
+            <span class="s1">&#39;ccy&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;PHP&#39;</span><span class="p">,</span> <span class="c1"># Char(3) The currency of the amount</span>
+            <span class="s1">&#39;description&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Test&#39;</span><span class="p">,</span> <span class="c1"># Varchar(128) A brief description of what the payment is for</span>
+            <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;some@merchant.ph&#39;</span><span class="p">,</span> <span class="c1"># Varchar(40) email address of customer</span>
+            <span class="s1">&#39;param1&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;param1&#39;</span><span class="p">,</span> <span class="c1"># Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed</span>
+            <span class="s1">&#39;param2&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;param2&#39;</span><span class="p">,</span> <span class="c1"># Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed</span>
+
+        <span class="p">];</span>
+
+        <span class="nv">$merchant_account</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;merchantid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANTID&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;password&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANT_KEY&#39;</span>
+        <span class="p">];</span>
+        <span class="c1">// Initialize Dragonpay</span>
+        <span class="nv">$dragonpay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dragonpay</span><span class="p">(</span><span class="nv">$merchant_account</span><span class="p">);</span>
+        <span class="c1">// Set parameters, then redirect to dragonpay</span>
+        <span class="nv">$dragonpay</span><span class="o">-&gt;</span><span class="na">setParameters</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">withProcid</span><span class="p">(</span><span class="nx">Processor</span><span class="o">::</span><span class="na">CREDIT_CARD</span><span class="p">)</span>
+                <span class="o">-&gt;</span><span class="na">away</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Or if you prefer using SOAP/XML web service</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="nv">$token</span> <span class="o">=</span> <span class="nv">$dragonpay</span><span class="o">-&gt;</span><span class="na">getToken</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span> <span class="nv">$token</span> <span class="nx">instanceof</span> <span class="nx">\Crazymeeks\Foundation\PaymentGateway\Dragonpay\Token</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// use procid</span>
+    <span class="nv">$dragonpay</span><span class="o">-&gt;</span><span class="na">withProcid</span><span class="p">(</span><span class="nx">Processor</span><span class="o">::</span><span class="na">CREDIT_CARD</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">away</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="payment-mode">
+<h2>Payment Mode<a class="headerlink" href="#payment-mode" title="Permalink to this headline">¶</a></h2>
+<p>By default, the payment mode of this library is sandbox. To change this to production, just pass boolean <code class="docutils literal notranslate"><span class="pre">false</span></code> to second parameter of Constructor of <code class="docutils literal notranslate"><span class="pre">Crazymeeks\Foundation\PaymentGateway\Dragonpay</span></code>.</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="nv">$merchant_account</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;merchantid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANTID&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;password&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANT_KEY&#39;</span>
+<span class="p">];</span>
+<span class="nv">$testing</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
+<span class="c1">// Initialize Dragonpay</span>
+<span class="nv">$dragonpay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dragonpay</span><span class="p">(</span><span class="nv">$merchant_account</span><span class="p">,</span> <span class="nv">$testing</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
+<p>You can wrap your code in a <code class="docutils literal notranslate"><span class="pre">try{}catch(){}</span></code> and use <code class="docutils literal notranslate"><span class="pre">Crazymeeks\Foundation\Exceptions\PaymentException</span></code> so you can catch error and see error message safely when something went wrong.</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="nx">YourNameSpace</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Crazymeeks\Foundation\PaymentGateway\Dragonpay</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Crazymeeks\Foundation\Exceptions\PaymentException</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">ExampleClass</span>
+<span class="p">{</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">postCheckout</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$parameters</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;txnid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;TXNID&#39;</span><span class="p">,</span> <span class="c1"># Varchar(40) A unique id identifying this specific transaction from the merchant site</span>
+            <span class="s1">&#39;amount&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># Numeric(12,2) The amount to get from the end-user (XXXX.XX)</span>
+            <span class="s1">&#39;ccy&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;PHP&#39;</span><span class="p">,</span> <span class="c1"># Char(3) The currency of the amount</span>
+            <span class="s1">&#39;description&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Test&#39;</span><span class="p">,</span> <span class="c1"># Varchar(128) A brief description of what the payment is for</span>
+            <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;some@merchant.ph&#39;</span><span class="p">,</span> <span class="c1"># Varchar(40) email address of customer</span>
+            <span class="s1">&#39;param1&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;param1&#39;</span><span class="p">,</span> <span class="c1"># Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed</span>
+            <span class="s1">&#39;param2&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;param2&#39;</span><span class="p">,</span> <span class="c1"># Varchar(80) [OPTIONAL] value that will be posted back to the merchant url when completed</span>
+
+        <span class="p">];</span>
+
+        <span class="nv">$merchant_account</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;merchantid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANTID&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;password&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANT_KEY&#39;</span>
+        <span class="p">];</span>
+
+        <span class="nv">$dragonpay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dragonpay</span><span class="p">(</span><span class="nv">$merchant_account</span><span class="p">);</span>
+        <span class="c1">// Set parameters, then redirect to dragonpay</span>
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="nv">$dragonpay</span><span class="o">-&gt;</span><span class="na">setParameters</span><span class="p">(</span><span class="nv">$parameters</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">away</span><span class="p">();</span>
+        <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">PaymentException</span> <span class="nv">$e</span><span class="p">){</span>
+            <span class="k">echo</span> <span class="nv">$e</span><span class="o">-&gt;</span><span class="na">getMessage</span><span class="p">();</span>
+        <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">\Exception</span> <span class="nv">$e</span><span class="p">){</span>
+            <span class="k">echo</span> <span class="nv">$e</span><span class="o">-&gt;</span><span class="na">getMessage</span><span class="p">();</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="postback-handler">
+<h2>Postback handler<a class="headerlink" href="#postback-handler" title="Permalink to this headline">¶</a></h2>
+<p>According to DP’s official documentation, <strong>postback URL</strong> is invoked directly by the PS and does not expect any return value. PS will invoke the <strong>postback URL</strong> first before the browser redirect to the <strong>return URL</strong>. Thus, the ideal process flow is: upon receiving the
+postback URL call, the merchant’s system performs the necessary database updates
+and initiate whatever back-end process is required. Then when it receives the return
+URL call, it counter-checks the status in the database and provides the visual
+response. If merchant does not provide both callback URL’s, PS will only invoke the
+one provided. <strong>Please keep in mind the HTTP method of your postback URL should be POST($_POST) not GET($_GET).</strong></p>
+<img alt="_images/postbackURL.png" src="_images/postbackURL.png" />
+<p>This library provides simple feature for this out of the box so you can handle data when PS invoked your _postback URL._ Just call <cite>handlePostback()</cite> method. <cite>handlePostback()</cite> will return the following array so you can do whatever you want to this returned data:</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="k">array</span><span class="p">(</span>
+    <span class="s1">&#39;txnid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;109019&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;refno&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;0398739&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;status&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;message&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;loioeiu8398!)()39483&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;digest&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;0oi30430aoi!)04490&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;description&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Success&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>Using closure/anonymous function:</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="nv">$merchant_account</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;merchantid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANTID&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;password&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANT_KEY&#39;</span>
+<span class="p">];</span>
+<span class="nv">$dragonpay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dragonpay</span><span class="p">(</span><span class="nv">$merchant_account</span><span class="p">);</span>
+<span class="nv">$dragonpay</span><span class="o">-&gt;</span><span class="na">handlePostback</span><span class="p">(</span><span class="k">function</span><span class="p">(</span><span class="nv">$data</span><span class="p">){</span>
+    <span class="c1">// do your stuff here like save data to your database.</span>
+    <span class="nv">$insert</span> <span class="o">=</span> <span class="s2">&quot;Insert INTO mytable(`txnid`, `refno`, `status`) VALUES (</span><span class="si">$data[&#39;txnid&#39;]</span><span class="s2">, </span><span class="si">$data[&#39;refno&#39;]</span><span class="s2">)&quot;</span><span class="p">;</span>
+    <span class="nb">mysql_query</span><span class="p">(</span><span class="nv">$insert</span><span class="p">);</span>
+
+    <span class="c1"># or if you are in Laravel, you can use Model or DB Facade...</span>
+    <span class="c1">// DB::table(&#39;mytable&#39;)-&gt;insert($data);</span>
+
+<span class="p">},</span> <span class="nv">$_POST</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Or if you are using Laravel framework, use <code class="docutils literal notranslate"><span class="pre">$request-&gt;all()</span></code> or <code class="docutils literal notranslate"><span class="pre">$request-&gt;toArray()</span></code> instead of $_POST.</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="nv">$dragonpay</span><span class="o">-&gt;</span><span class="na">handlePostback</span><span class="p">(</span><span class="k">function</span><span class="p">(</span><span class="nv">$data</span><span class="p">){</span>
+    <span class="c1">// do your stuff here like save data to your database.</span>
+    <span class="nv">$insert</span> <span class="o">=</span> <span class="s2">&quot;Insert INTO mytable(`txnid`, `refno`, `status`) VALUES (</span><span class="si">$data[&#39;txnid&#39;]</span><span class="s2">, </span><span class="si">$data[&#39;refno&#39;]</span><span class="s2">)&quot;</span><span class="p">;</span>
+    <span class="nb">mysql_query</span><span class="p">(</span><span class="nv">$insert</span><span class="p">);</span>
+
+    <span class="c1"># or if you are in Laravel, you can use Model or DB Facade...</span>
+    <span class="c1">// DB::table(&#39;mytable&#39;)-&gt;insert($data);</span>
+
+<span class="p">},</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">());</span>
+</pre></div>
+</div>
+<p>Or you can also create your own class that implements <code class="docutils literal notranslate"><span class="pre">Crazymeeks\Foundation\PaymentGateway\Handler\PostbackHandlerInterface</span></code></p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="nx">YourNameSpace</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">Crazymeeks\Foundation\PaymentGateway\Handler\PostbackHandlerInterface</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">MyPostBackHandler</span> <span class="k">implements</span> <span class="nx">PostbackHandlerInterface</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">handle</span><span class="p">(</span><span class="k">array</span> <span class="nv">$data</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// do your stuff here like save data to your database.</span>
+        <span class="nv">$insert</span> <span class="o">=</span> <span class="s2">&quot;Insert INTO mytable(`txnid`, `refno`, `status`) VALUES (</span><span class="si">$data[&#39;txnid&#39;]</span><span class="s2">, </span><span class="si">$data[&#39;refno&#39;]</span><span class="s2">)&quot;</span><span class="p">;</span>
+        <span class="nb">mysql_query</span><span class="p">(</span><span class="nv">$insert</span><span class="p">);</span>
+
+        <span class="c1"># or if you are in Laravel, you can use Model or DB Facade...</span>
+        <span class="c1">// DB::table(&#39;mytable&#39;)-&gt;insert($data);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nv">$merchant_account</span> <span class="o">=</span> <span class="p">[</span>
+<span class="s1">&#39;merchantid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANTID&#39;</span><span class="p">,</span>
+<span class="s1">&#39;password&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANT_KEY&#39;</span>
+<span class="p">];</span>
+<span class="nv">$dragonpay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dragonpay</span><span class="p">(</span><span class="nv">$merchant_account</span><span class="p">);</span>
+<span class="nv">$dragonpay</span><span class="o">-&gt;</span><span class="na">handlePostback</span><span class="p">(</span><span class="k">new</span> <span class="nx">MyPostBackHandler</span><span class="p">(),</span> <span class="nv">$_POST</span><span class="p">);</span>
+<span class="c1"># If you are in Laravel, use $request-&gt;all() or $request-&gt;toArray() instead of $_POST.</span>
+<span class="c1"># $dragonpay-&gt;handlePostback(new MyPostBackHandler(), $request-&gt;all());</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cancellation-of-transaction">
+<h2>Cancellation of Transaction<a class="headerlink" href="#cancellation-of-transaction" title="Permalink to this headline">¶</a></h2>
+<p>To cancel a transaction, just call <code class="docutils literal notranslate"><span class="pre">action()</span></code> method and pass object of <code class="docutils literal notranslate"><span class="pre">Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\CancelTransaction</span></code> with transaction id as constructor parameter. <code class="docutils literal notranslate"><span class="pre">action()</span></code> method will throw <code class="docutils literal notranslate"><span class="pre">Crazymeeks\Foundation\Exceptions\Action\CancelTransactionException</span></code> when error occured.</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="nv">$merchant_account</span> <span class="o">=</span> <span class="p">[</span>
+   <span class="s1">&#39;merchantid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANTID&#39;</span><span class="p">,</span>
+   <span class="s1">&#39;password&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANT_KEY&#39;</span>
+<span class="p">];</span>
+<span class="nv">$txnid</span> <span class="o">=</span> <span class="s1">&#39;SAMPLE-TXNID-10910&#39;</span><span class="p">;</span>
+<span class="nv">$dragonpay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dragonpay</span><span class="p">(</span><span class="nv">$merchant_account</span><span class="p">);</span>
+<span class="k">try</span><span class="p">{</span>
+    <span class="nv">$dragonpay</span><span class="o">-&gt;</span><span class="na">action</span><span class="p">(</span><span class="k">new</span> <span class="nx">\Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\CancelTransaction</span><span class="p">(</span><span class="nv">$txnid</span><span class="p">));</span>
+<span class="p">}</span><span class="k">catch</span><span class="p">(</span><span class="nx">\Crazymeeks\Foundation\Exceptions\Action\CancelTransactionException</span> <span class="nv">$e</span><span class="p">){</span>
+    <span class="c1">// Error transaction cancellation</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="transaction-status-inquiry">
+<h2>Transaction Status Inquiry<a class="headerlink" href="#transaction-status-inquiry" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt>If you want to check transaction status, just call <code class="docutils literal notranslate"><span class="pre">action()</span></code> method of pass object of <code class="docutils literal notranslate"><span class="pre">Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\CheckTransactionStatus</span></code> with transaction id as constructor parameter.  This will return either one of the following status:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">Success</span></code>
+<code class="docutils literal notranslate"><span class="pre">Failure</span></code>
+<code class="docutils literal notranslate"><span class="pre">Pending</span></code>
+<code class="docutils literal notranslate"><span class="pre">Unknown</span></code>
+<code class="docutils literal notranslate"><span class="pre">Refund</span></code>
+<code class="docutils literal notranslate"><span class="pre">Chargeback</span></code>
+<code class="docutils literal notranslate"><span class="pre">Void</span></code>
+<code class="docutils literal notranslate"><span class="pre">Authorized</span></code></p>
+</dd>
+</dl>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="nv">$merchant_account</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;merchantid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANTID&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;password&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANT_KEY&#39;</span>
+<span class="p">];</span>
+<span class="nv">$txnid</span> <span class="o">=</span> <span class="s1">&#39;SAMPLE-TXNID-10910&#39;</span><span class="p">;</span>
+<span class="nv">$dragonpay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dragonpay</span><span class="p">(</span><span class="nv">$merchant_account</span><span class="p">);</span>
+<span class="nv">$status</span> <span class="o">=</span> <span class="nv">$dragonpay</span><span class="o">-&gt;</span><span class="na">action</span><span class="p">(</span><span class="k">new</span> <span class="nx">\Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\CheckTransactionStatus</span><span class="p">(</span><span class="nv">$txnid</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="advanced-control">
+<h2>Advanced Control<a class="headerlink" href="#advanced-control" title="Permalink to this headline">¶</a></h2>
+<p>Please read <a class="reference external" href="https://www.dragonpay.ph/wp-content/uploads/Dragonpay-PS-API-v2-latest.pdf">Dragonpay</a> documentation then read through 5.4.2 Advanced Control</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="nv">$merchant_account</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;merchantid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANTID&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;password&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANT_KEY&#39;</span>
+<span class="p">];</span>
+<span class="nv">$dragonpay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dragonpay</span><span class="p">(</span><span class="nv">$merchant_account</span><span class="p">);</span>
+<span class="nv">$amount</span> <span class="o">=</span> <span class="nx">Dragonpay</span><span class="o">::</span><span class="na">ALL_PROCESSORS</span><span class="p">;</span>
+<span class="nv">$processors</span> <span class="o">=</span> <span class="nv">$dragonpay</span><span class="o">-&gt;</span><span class="na">getPaymentChannels</span><span class="p">(</span><span class="nv">$amount</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>Response</strong></p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="k">Array</span>
+<span class="p">(</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="k">stdClass</span> <span class="nx">Object</span>
+        <span class="p">(</span>
+            <span class="p">[</span><span class="nx">procId</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">BDO</span>
+            <span class="p">[</span><span class="nx">shortName</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">BDO</span>
+            <span class="p">[</span><span class="nx">longName</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">BDO</span> <span class="nx">Internet</span> <span class="nx">Banking</span>
+            <span class="p">[</span><span class="nx">logo</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="o">~/</span><span class="nx">images</span><span class="o">/</span><span class="nx">bdologo</span><span class="o">.</span><span class="nx">jpg</span>
+            <span class="p">[</span><span class="nx">currencies</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">PHP</span>
+            <span class="p">[</span><span class="nx">url</span><span class="p">]</span> <span class="o">=&gt;</span>
+            <span class="p">[</span><span class="nx">realTime</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">1</span>
+            <span class="p">[</span><span class="nx">pwd</span><span class="p">]</span> <span class="o">=&gt;</span>
+            <span class="p">[</span><span class="nx">defaultBillerId</span><span class="p">]</span> <span class="o">=&gt;</span>
+            <span class="p">[</span><span class="nx">hasTxnPwd</span><span class="p">]</span> <span class="o">=&gt;</span>
+            <span class="p">[</span><span class="nx">hasManualEnrollment</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">1</span>
+            <span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">1</span>
+            <span class="p">[</span><span class="nx">status</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">A</span>
+            <span class="p">[</span><span class="nx">remarks</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="k">Use</span> <span class="nx">your</span> <span class="nx">BDO</span> <span class="nx">Retail</span> <span class="nx">Internet</span> <span class="nx">Banking</span> <span class="p">(</span><span class="nx">RIB</span><span class="p">)</span> <span class="nx">account</span> <span class="nx">to</span> <span class="nx">make</span> <span class="nx">a</span> <span class="nx">payment</span><span class="o">.</span> <span class="nx">Read</span> <span class="nx">our</span> <span class="o">&lt;</span><span class="nx">a</span> <span class="nx">href</span><span class="o">=</span><span class="s1">&#39;http://www.dragonpay.ph/bdorib-how-to&#39;</span> <span class="nx">target</span><span class="o">=</span><span class="s1">&#39;_blank&#39;</span><span class="o">&gt;</span><span class="nx">BDO</span> <span class="nx">RIB</span> <span class="nx">guide</span><span class="o">&lt;/</span><span class="nx">a</span><span class="o">&gt;</span> <span class="k">for</span> <span class="nx">more</span> <span class="nx">details</span><span class="o">.</span>
+            <span class="p">[</span><span class="nx">dayOfWeek</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">XXXXXXX</span>
+            <span class="p">[</span><span class="nx">startTime</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mo">06</span><span class="o">:</span><span class="mo">00</span>
+            <span class="p">[</span><span class="nx">endTime</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">21</span><span class="o">:</span><span class="mi">30</span>
+            <span class="p">[</span><span class="nx">minAmount</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">1</span>
+            <span class="p">[</span><span class="nx">maxAmount</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">1000000</span>
+            <span class="p">[</span><span class="nx">mustRedirect</span><span class="p">]</span> <span class="o">=&gt;</span>
+            <span class="p">[</span><span class="nx">surcharge</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">0</span>
+            <span class="p">[</span><span class="nx">hasAltRefNo</span><span class="p">]</span> <span class="o">=&gt;</span>
+            <span class="p">[</span><span class="nx">cost</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">0</span>
+        <span class="p">)</span>
+
+    <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="k">stdClass</span> <span class="nx">Object</span>
+        <span class="p">(</span>
+            <span class="p">[</span><span class="nx">procId</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">BDOA</span>
+            <span class="p">[</span><span class="nx">shortName</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">BDO</span> <span class="nx">ATM</span>
+            <span class="p">[</span><span class="nx">longName</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">Banco</span> <span class="nx">de</span> <span class="nx">Oro</span> <span class="nx">ATM</span>
+            <span class="p">[</span><span class="nx">logo</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="o">~/</span><span class="nx">images</span><span class="o">/</span><span class="nx">bdologo</span><span class="o">.</span><span class="nx">jpg</span>
+            <span class="p">[</span><span class="nx">currencies</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">PHP</span>
+            <span class="p">[</span><span class="nx">url</span><span class="p">]</span> <span class="o">=&gt;</span>
+            <span class="p">[</span><span class="nx">realTime</span><span class="p">]</span> <span class="o">=&gt;</span>
+            <span class="p">[</span><span class="nx">pwd</span><span class="p">]</span> <span class="o">=&gt;</span>
+            <span class="p">[</span><span class="nx">defaultBillerId</span><span class="p">]</span> <span class="o">=&gt;</span>
+            <span class="p">[</span><span class="nx">hasTxnPwd</span><span class="p">]</span> <span class="o">=&gt;</span>
+            <span class="p">[</span><span class="nx">hasManualEnrollment</span><span class="p">]</span> <span class="o">=&gt;</span>
+            <span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">2</span>
+            <span class="p">[</span><span class="nx">status</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">A</span>
+            <span class="p">[</span><span class="nx">remarks</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">Pay</span> <span class="nx">at</span> <span class="nx">any</span> <span class="nx">BDO</span> <span class="nx">ATM</span> <span class="nx">nationwide</span><span class="o">.</span> <span class="nx">Payments</span> <span class="nx">are</span> <span class="nx">processed</span> <span class="nb">next</span> <span class="nx">day</span><span class="o">.</span> <span class="o">&lt;</span><span class="nx">a</span> <span class="nx">href</span><span class="o">=</span><span class="s1">&#39;http://www.dragonpay.ph/bdo-atm-how-to/&#39;</span> <span class="nx">target</span><span class="o">=</span><span class="s1">&#39;_blank&#39;</span><span class="o">&gt;</span><span class="nx">Click</span> <span class="nx">here</span> <span class="k">for</span> <span class="nx">details</span><span class="o">&lt;/</span><span class="nx">a</span><span class="o">&gt;.</span> <span class="nx">Payments</span> <span class="nx">are</span> <span class="nx">processed</span> <span class="nb">next</span> <span class="nx">day</span><span class="o">.</span>
+            <span class="p">[</span><span class="nx">dayOfWeek</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">XXXXXXX</span>
+            <span class="p">[</span><span class="nx">startTime</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mo">00</span><span class="o">:</span><span class="mo">00</span>
+            <span class="p">[</span><span class="nx">endTime</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mo">00</span><span class="o">:</span><span class="mo">00</span>
+            <span class="p">[</span><span class="nx">minAmount</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">200</span>
+            <span class="p">[</span><span class="nx">maxAmount</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">1000000</span>
+            <span class="p">[</span><span class="nx">mustRedirect</span><span class="p">]</span> <span class="o">=&gt;</span>
+            <span class="p">[</span><span class="nx">surcharge</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">0</span>
+            <span class="p">[</span><span class="nx">hasAltRefNo</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">1</span>
+            <span class="p">[</span><span class="nx">cost</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">0</span>
+        <span class="p">)</span>
+
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Note: If an amount value greater than zero is passed, it will return
+a list of channels available for that amount. But if you want to retrieve the full list
+regardless of the amount so you can cache it locally and avoid having to calling the
+web method for each transaction, you can set amount to <code class="docutils literal notranslate"><span class="pre">Dragonpay::ALL_PROCESSORS</span></code>.</p>
+</div>
+<div class="section" id="updating-payment-url-and-web-service-url">
+<h2>Updating payment url and web service url<a class="headerlink" href="#updating-payment-url-and-web-service-url" title="Permalink to this headline">¶</a></h2>
+<p>If for some intance Dragonpay updated their payment and web service url(most likely will not happen).</p>
+<p><strong>Payment URL</strong> is the url where customer will be redirected to process and complete payment.
+<strong>Web Service URL</strong> is the url where we request token.
+<strong>Send Billing Info URL</strong> sending billing info for billing info for credit card payment</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="nv">$merchant_account</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;merchantid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANTID&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;password&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANT_KEY&#39;</span>
+<span class="p">];</span>
+<span class="nv">$dragonpay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dragonpay</span><span class="p">(</span><span class="nv">$merchant_account</span><span class="p">);</span>
+
+<span class="c1">// Payment Url</span>
+<span class="nv">$newPaymentUrl</span> <span class="o">=</span> <span class="s2">&quot;https://test.dp.com/Pay.aspx&quot;</span><span class="p">;</span>
+<span class="c1">// Web Service Url</span>
+<span class="nv">$newWebSrvcUrl</span> <span class="o">=</span> <span class="s2">&quot;https://test.dp.com/WebService.aspx&quot;</span><span class="p">;</span>
+<span class="nv">$newBillingInfoUrl</span> <span class="o">=</span> <span class="s2">&quot;https://test.dp.com/WebServiceBilling.aspx&quot;</span><span class="p">;</span>
+<span class="nv">$dragonpay</span><span class="o">-&gt;</span><span class="na">setPaymentUrl</span><span class="p">(</span><span class="nv">$newPaymentUrl</span><span class="p">)</span>
+        <span class="o">-&gt;</span><span class="na">setBillingInfoUrl</span><span class="p">(</span><span class="nv">$newBillingInfoUrl</span><span class="p">)</span>
+        <span class="o">-&gt;</span><span class="na">setWebServiceUrl</span><span class="p">(</span><span class="nv">$newWebSrvcUrl</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>Note:</strong> The code above will change the api urls of the sandbox. You just need to pass <cite>boolean false</cite>
+as 2nd parameter of <cite>Dragonpay</cite> class.
+It should look like this:</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="nv">$is_sandbox</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
+<span class="nv">$dragonpay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dragonpay</span><span class="p">(</span><span class="nv">$merchant_account</span><span class="p">,</span> <span class="nv">$is_sandbox</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tips">
+<h2>Tips<a class="headerlink" href="#tips" title="Permalink to this headline">¶</a></h2>
+<p>Do not use email domain <code class="docutils literal notranslate"><span class="pre">&#64;example.com</span></code>. It seems the Payment switch does not accept it.</p>
+</div>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p>If you found any security issues or bugs, it will be a big help if you raise an issue or email the author directly and will address it right away.</p>
+</div>
+<div class="section" id="author">
+<h2>Author<a class="headerlink" href="#author" title="Permalink to this headline">¶</a></h2>
+<p>Jeff Claud</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="overview.html" class="btn btn-neutral float-left" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Jeff Claud.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

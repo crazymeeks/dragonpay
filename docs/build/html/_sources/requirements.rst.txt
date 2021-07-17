@@ -1,0 +1,4 @@
+Requirements
+-------------
+- PHP >= 7.1
+- SoapClient
