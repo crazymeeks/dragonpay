@@ -14,7 +14,7 @@
 	<a href="https://github.com/crazymeeks/dragonpay/network"><img src="https://img.shields.io/github/forks/crazymeeks/dragonpay.svg?style=social&label=Fork" alt="Fork"></a>
 </h1>
 
-## # Welcome to Dragonpay 3.2.8 wiki!  
+## # Welcome to Dragonpay 3.2.9 wiki!  
   
 This library will help you integrate your application with Dragonpay payment gateway. 
 
@@ -44,8 +44,8 @@ This library will help you integrate your application with Dragonpay payment gat
 ***
 
 ### # Getting Started  
-1. Download library version **v3.2.8** using composer:  
- `composer require crazymeeks/dragonpay v3.2.8`  
+1. Download library version **v3.2.9** using composer:  
+ `composer require crazymeeks/dragonpay v3.2.9`  
 2. After downloading, use the` Dragonpay` class anywhere in your code:  
  `use Crazymeeks\Foundation\PaymentGateway\Dragonpay;`  
 
