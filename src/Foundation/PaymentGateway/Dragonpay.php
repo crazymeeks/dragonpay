@@ -197,7 +197,7 @@ class Dragonpay implements PaymentGatewayInterface
 	 * The request token we pass after redirected
 	 * to dragonpay PS
 	 * 
-	 * @var string
+	 * @var \Crazymeeks\Foundation\PaymentGateway\DragonPay\Token
 	 */
     public $token = null;
 
@@ -229,7 +229,7 @@ class Dragonpay implements PaymentGatewayInterface
     private $debug_message;
 
     /**
-     * @var \Crazymeeks\Foundation\PaymentGateway\Dragonpay\PaymentChannels
+     * @var \Crazymeeks\Foundation\PaymentGateway\DragonPay\PaymentChannels
      */
     public $channels;
 
@@ -358,11 +358,11 @@ class Dragonpay implements PaymentGatewayInterface
      * When using SOAP/XML Web Service Model
      * 
      * @param array $parameters
-     * @param null|Crazymeeks\Foundation\Adapter\SoapClientAdapter $soap_adapter
+     * @param null|\Crazymeeks\Foundation\Adapter\SoapClientAdapter $soap_adapter
      * 
      * @return \Crazymeeks\Foundation\PaymentGateway\DragonPay\Token
      * 
-     * @throws \Exceptions
+     * @throws \Exception
      */
     public function getToken(array $parameters, SoapClientAdapter $soap_adapter = null)
     {
@@ -436,8 +436,8 @@ class Dragonpay implements PaymentGatewayInterface
      * Using credit card payment.
      *
      * @param array $parameters
-     * @param \Crazymeeks\Foundation\PaymentGateway\BillingInfoVerifier|null
-     * @param \Crazymeeks\Foundation\Adapter\SoapClientAdapter|null
+     * @param \Crazymeeks\Foundation\PaymentGateway\BillingInfoVerifier|null $verifier
+     * @param \Crazymeeks\Foundation\Adapter\SoapClientAdapter|null $soap
      * 
      * @return $this
      */
@@ -635,7 +635,7 @@ class Dragonpay implements PaymentGatewayInterface
     /**
      * Postback handler
      * 
-     * @param Crazymeeks\Foundation\PaymentGateway\Handler\PostbackHandlerInterface|\Closure $callback
+     * @param \Crazymeeks\Foundation\PaymentGateway\Handler\PostbackHandlerInterface|\Closure $callback
      * @param array $postData
      * 
      * @return mixed
@@ -664,7 +664,7 @@ class Dragonpay implements PaymentGatewayInterface
      * 
      * @return string
      * 
-     * @throws Crazymeeks\Foundation\Exceptions\InvalidPostbackInvokerException
+     * @throws \Crazymeeks\Foundation\Exceptions\InvalidPostbackInvokerException
      * 
      */
     private function getStatusDescription($status)
@@ -679,13 +679,8 @@ class Dragonpay implements PaymentGatewayInterface
      * Get all available payment channels/processors
      * using SOAP webservice model
      *
-     * @param array $parameters
-     *     $parameters = [
-     *         'merchantid' => 'Unique code assigned to merchant',
-     *         'password'   => 'Password associated with merchantid',
-     *         'amount'     => Dragonpay::ALL_PROCESSORS,
-     *     ];
-     * @param null|Crazymeeks\Foundation\Adapter\SoapClientAdapter $soap_adapter
+     * @param mixed $amount
+     * @param \Crazymeeks\Foundation\Adapter\SoapClientAdapter|null $soap_adapter
      * 
      * @return mixed
      */

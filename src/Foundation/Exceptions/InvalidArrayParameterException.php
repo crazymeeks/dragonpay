@@ -13,7 +13,7 @@ namespace Crazymeeks\Foundation\Exceptions;
 
 use Crazymeeks\Foundation\Exceptions\PaymentException;
 
-class InvalidArrayParameterException extends PaymentException
+final class InvalidArrayParameterException extends PaymentException
 {
 
     public function construct($message, $code = 400)

@@ -41,7 +41,7 @@ class BillingInfoVerifier
     /**
      * Set our parameter instance
      *
-     * @param Crazymeeks\Foundation\PaymentGateway\Parameters $parameter
+     * @param \Crazymeeks\Foundation\PaymentGateway\Parameters $parameter
      * 
      * @return $this
      */

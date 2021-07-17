@@ -1,0 +1,14 @@
+parameters:
+    level: 5
+
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false
+
+    paths:
+        - src/
+
+    ignoreErrors:
+        - '#Result of method Crazymeeks\Foundation\PaymentGateway\DragonPay\Action\BaseAction::getOp\(\) (void) is used.#'
+        - '#Binary operation "." between string and void results in an error.#'
+        - '#Method Crazymeeks\Foundation\PaymentGateway\DragonPay\Action\CancelTransaction::getOp\(\) with return type void returns string but should not return anything.#'
+        - '#Parameter \#2 \$replace of function header expects bool, int given.#'

@@ -40,11 +40,11 @@ class PaymentChannels
     /**
      * Check payment channel is available every weekdays(Monday-Friday)
      *
-     * @param string $dayOfWeek
+     * @param string $daysOfWeek
      * 
      * @return bool
      */
-    public function weekDays($daysOfWeek)
+    public function weekDays(string $daysOfWeek)
     {
         return self::WEEKDAYS === $daysOfWeek;
     }
@@ -52,11 +52,11 @@ class PaymentChannels
      /**
      * Check payment channel is available every weekends(Sun & Sat)
      *
-     * @param string $dayOfWeek
+     * @param string $daysOfWeek
      * 
      * @return bool
      */
-    public function weekEnds($daysOfWeek)
+    public function weekEnds(string $daysOfWeek)
     {
         return self::WEEKENDS_ONLY === $daysOfWeek;
     }
@@ -64,11 +64,11 @@ class PaymentChannels
     /**
      * Check payment channel is available every weekends(Sun-Friday)
      *
-     * @param string $dayOfWeek
+     * @param string $daysOfWeek
      * 
      * @return bool
      */
-    public function sundayToFriday($daysOfWeek)
+    public function sundayToFriday(string $daysOfWeek)
     {
         return self::SUNDAY_TO_FRIDAY === $daysOfWeek;
     }
@@ -76,11 +76,11 @@ class PaymentChannels
     /**
      * Check payment channel is available every Mo-Sat
      *
-     * @param string $dayOfWeek
+     * @param string $daysOfWeek
      * 
      * @return bool
      */
-    public function mondayToSaturday($daysOfWeek)
+    public function mondayToSaturday(string $daysOfWeek)
     {
         return self::MONDAY_TO_SATURDAY === $daysOfWeek;
     }

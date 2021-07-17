@@ -40,13 +40,15 @@ abstract class BaseAction implements ActionInterface
     /**
      * Transaction operation
      *
-     * @return void
+     * @return string
      */
     protected function getOp()
     {
         throw new \Exception('Class {' . get_class($this) . '} does not implement getOp() method.');
     }
 
+
+    
     /**
      * @inheritDoc
      */

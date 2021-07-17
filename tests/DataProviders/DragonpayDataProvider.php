@@ -44,7 +44,7 @@ class DragonpayDataProvider
     /**
      * When using credit card, these info is required
      *
-     * @return void
+     * @return array
      */
     public function billing_info()
     {

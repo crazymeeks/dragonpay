@@ -88,7 +88,7 @@ class Parameters
 	protected $billing_info_parameters = [];
 
 	/**
-	 * @var @param Crazymeeks\Foundation\PaymentGateway\Dragonpay
+	 * @var \Crazymeeks\Foundation\PaymentGateway\Dragonpay
 	 */
 	private $dragonpay;
 
@@ -97,8 +97,8 @@ class Parameters
 	/**
 	 * Constructor
 	 * 
-	 * @param \Crazymeeks\Foundation\PaymentGateway\Dragonpay
-	 * @param \Crazymeeks\Contracts\DigestInterface
+	 * @param \Crazymeeks\Foundation\PaymentGateway\Dragonpay $dragonpay
+	 * @param \Crazymeeks\Contracts\DigestInterface|null $digestor
 	 */
 	public function __construct(
 		Dragonpay $dragonpay,
