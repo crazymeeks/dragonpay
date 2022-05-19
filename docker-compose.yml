@@ -1,0 +1,17 @@
+version: "3.2"
+
+services:
+  crazymeeks-dragonpay:
+    image: jclaud/nginx-php:7.4
+    container_name: crazymeeks-dragonpay-172.28.5.27
+    volumes:
+       - /var/www/web/packagist/dragonpay:/var/www/web
+    networks:
+       default:
+          ipv4_address: 172.28.5.27
+    tty: true
+    stdin_open: true
+networks:
+  default:
+    external:
+      name: development

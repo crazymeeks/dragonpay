@@ -435,15 +435,7 @@ To cancel a transaction, just call ``action()`` method and pass object of ``Craz
 
 Transaction Status Inquiry
 ==========================
-If you want to check transaction status, just call ``action()`` method of pass object of ``Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\CheckTransactionStatus`` with transaction id as constructor parameter.  This will return either one of the following status:
-    ``Success``
-    ``Failure``
-    ``Pending``
-    ``Unknown``
-    ``Refund``
-    ``Chargeback``
-    ``Void``
-    ``Authorized``
+If you want to check transaction status, just call ``action()`` method of pass object of ``Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\CheckTransactionStatus``. You may pass either ``txnid`` or ``refno`` in the constructor of this class.
 
 .. code-block:: php
 
@@ -452,8 +444,34 @@ If you want to check transaction status, just call ``action()`` method of pass o
         'password'   => 'MERCHANT_KEY'
     ];
     $txnid = 'SAMPLE-TXNID-10910';
+    
     $dragonpay = new Dragonpay($merchant_account);
     $status = $dragonpay->action(new \Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\CheckTransactionStatus($txnid));
+
+Transaction Status Inquiry Response
+===================================
+
+.. code-block:: php
+   
+    stdClass Object
+    (
+        [RefNo] => XMNUQ7M9W5
+        [MerchantId] => MERCHANTID
+        [TxnId] => TXNID-145076875
+        [RefDate] => 2022-05-19T16:37:11.915
+        [Amount] => 1
+        [Currency] => PHP
+        [Description] => Test Description
+        [Status] => S
+        [Email] => some@merchant.ph
+        [MobileNo] => 
+        [ProcId] => BOG
+        [ProcMsg] => [000] BOG Reference No: 20220519163731
+        [SettleDate] => 2022-05-19T16:37:31.76
+        [Param1] => param1
+        [Param2] => param2
+        [Fee] => 0
+    )
 
 Advanced Control
 ================

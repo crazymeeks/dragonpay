@@ -102,6 +102,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#cancellation-of-transaction">Cancellation of Transaction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#transaction-status-inquiry">Transaction Status Inquiry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transaction-status-inquiry-response">Transaction Status Inquiry Response</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#advanced-control">Advanced Control</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#updating-payment-url-and-web-service-url">Updating payment url and web service url</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tips">Tips</a></li>
@@ -584,24 +585,39 @@ one provided. <strong>Please keep in mind the HTTP method of your postback URL s
 </div>
 <div class="section" id="transaction-status-inquiry">
 <h2>Transaction Status Inquiry<a class="headerlink" href="#transaction-status-inquiry" title="Permalink to this headline">¶</a></h2>
-<dl class="simple">
-<dt>If you want to check transaction status, just call <code class="docutils literal notranslate"><span class="pre">action()</span></code> method of pass object of <code class="docutils literal notranslate"><span class="pre">Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\CheckTransactionStatus</span></code> with transaction id as constructor parameter.  This will return either one of the following status:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">Success</span></code>
-<code class="docutils literal notranslate"><span class="pre">Failure</span></code>
-<code class="docutils literal notranslate"><span class="pre">Pending</span></code>
-<code class="docutils literal notranslate"><span class="pre">Unknown</span></code>
-<code class="docutils literal notranslate"><span class="pre">Refund</span></code>
-<code class="docutils literal notranslate"><span class="pre">Chargeback</span></code>
-<code class="docutils literal notranslate"><span class="pre">Void</span></code>
-<code class="docutils literal notranslate"><span class="pre">Authorized</span></code></p>
-</dd>
-</dl>
+<p>If you want to check transaction status, just call <code class="docutils literal notranslate"><span class="pre">action()</span></code> method of pass object of <code class="docutils literal notranslate"><span class="pre">Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\CheckTransactionStatus</span></code>. You may pass either <code class="docutils literal notranslate"><span class="pre">txnid</span></code> or <code class="docutils literal notranslate"><span class="pre">refno</span></code> in the constructor of this class.</p>
 <div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="nv">$merchant_account</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s1">&#39;merchantid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANTID&#39;</span><span class="p">,</span>
     <span class="s1">&#39;password&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;MERCHANT_KEY&#39;</span>
 <span class="p">];</span>
 <span class="nv">$txnid</span> <span class="o">=</span> <span class="s1">&#39;SAMPLE-TXNID-10910&#39;</span><span class="p">;</span>
+
 <span class="nv">$dragonpay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dragonpay</span><span class="p">(</span><span class="nv">$merchant_account</span><span class="p">);</span>
 <span class="nv">$status</span> <span class="o">=</span> <span class="nv">$dragonpay</span><span class="o">-&gt;</span><span class="na">action</span><span class="p">(</span><span class="k">new</span> <span class="nx">\Crazymeeks\Foundation\PaymentGateway\Dragonpay\Action\CheckTransactionStatus</span><span class="p">(</span><span class="nv">$txnid</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="transaction-status-inquiry-response">
+<h2>Transaction Status Inquiry Response<a class="headerlink" href="#transaction-status-inquiry-response" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="k">stdClass</span> <span class="nx">Object</span>
+<span class="p">(</span>
+    <span class="p">[</span><span class="nx">RefNo</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">XMNUQ7M9W5</span>
+    <span class="p">[</span><span class="nx">MerchantId</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">MERCHANTID</span>
+    <span class="p">[</span><span class="nx">TxnId</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">TXNID</span><span class="o">-</span><span class="mi">145076875</span>
+    <span class="p">[</span><span class="nx">RefDate</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">2022</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">19</span><span class="nx">T16</span><span class="o">:</span><span class="mi">37</span><span class="o">:</span><span class="mf">11.915</span>
+    <span class="p">[</span><span class="nx">Amount</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">1</span>
+    <span class="p">[</span><span class="nx">Currency</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">PHP</span>
+    <span class="p">[</span><span class="nx">Description</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">Test</span> <span class="nx">Description</span>
+    <span class="p">[</span><span class="nx">Status</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">S</span>
+    <span class="p">[</span><span class="nx">Email</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">some</span><span class="o">@</span><span class="nx">merchant</span><span class="o">.</span><span class="nx">ph</span>
+    <span class="p">[</span><span class="nx">MobileNo</span><span class="p">]</span> <span class="o">=&gt;</span>
+    <span class="p">[</span><span class="nx">ProcId</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">BOG</span>
+    <span class="p">[</span><span class="nx">ProcMsg</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="mo">000</span><span class="p">]</span> <span class="nx">BOG</span> <span class="nx">Reference</span> <span class="nx">No</span><span class="o">:</span> <span class="mi">20220519163731</span>
+    <span class="p">[</span><span class="nx">SettleDate</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">2022</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">19</span><span class="nx">T16</span><span class="o">:</span><span class="mi">37</span><span class="o">:</span><span class="mf">31.76</span>
+    <span class="p">[</span><span class="nx">Param1</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">param1</span>
+    <span class="p">[</span><span class="nx">Param2</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">param2</span>
+    <span class="p">[</span><span class="nx">Fee</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">0</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>

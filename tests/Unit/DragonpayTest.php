@@ -557,7 +557,8 @@ class DragonpayTest extends TestCase
         $dragonpay = new Dragonpay($this->merchant_account);
 
         $transactionid = 'TXNID-1735646342';
-        $transactionid = '5d0c345729043';
+        $transactionid = 'XMNUQ7M9W5';
+
         $parameter = [
             'merchantid' => $this->merchant_account['merchantid'],
             'merchantpwd' => $this->merchant_account['password'],
@@ -568,14 +569,22 @@ class DragonpayTest extends TestCase
         
         $curl = \Mockery::mock(CurlService::class);
         $curl->shouldReceive('to')
-             ->with($url)
+             ->with(\Mockery::any())
+             ->andReturnSelf();
+        $curl->shouldReceive('withHeader')
+             ->with(\Mockery::any())
+             ->andReturnSelf();
+        $curl->shouldReceive('returnResponseObject')
              ->andReturnSelf();
         $curl->shouldReceive('get')
-             ->andReturn('S');
-
-        $status = $dragonpay->action(new CheckTransactionStatus($transactionid), $curl);
+             ->andReturn(json_decode(json_encode([
+                 'content' => '{"RefNo":"XMNUQ7M9W5","MerchantId":"CLAUDTEST","TxnId":"TXNID-145076875","RefDate":"2022-05-19T16:37:11.915","Amount":1.0,"Currency":"PHP","Description":"Test Description","Status":"S","Email":"some@merchant.ph","MobileNo":"","ProcId":"BOG","ProcMsg":"[000] BOG Reference No: 20220519163731","SettleDate":"2022-05-19T16:37:31.76","Param1":"param1","Param2":"param2","Fee":0.0}',
+                 'status' => 200,
+             ])));
         
-        $this->assertEquals($status, 'Success');
+        $result = $dragonpay->action(new CheckTransactionStatus($transactionid), $curl);
+        
+        $this->assertEquals($transactionid, $result->RefNo);
 
     }
 

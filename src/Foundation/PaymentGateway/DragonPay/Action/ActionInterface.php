@@ -13,9 +13,17 @@ namespace Crazymeeks\Foundation\PaymentGateway\DragonPay\Action;
 
 use Ixudra\Curl\CurlService;
 use Crazymeeks\Foundation\PaymentGateway\Dragonpay;
-use  Crazymeeks\Foundation\Adapter\SoapClientAdapter;
 
 interface ActionInterface
 {
+
+    /**
+     * Do action
+     *
+     * @param \Crazymeeks\Foundation\PaymentGateway\Dragonpay $dragonpay
+     * @param \Ixudra\Curl\CurlService|null $curl
+     * 
+     * @return mixed
+     */
     public function doAction(Dragonpay $dragonpay, CurlService $curl = null);
 }
