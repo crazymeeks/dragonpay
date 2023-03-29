@@ -18,7 +18,7 @@
 Documentation is available [here](https://dragonpay.readthedocs.io/en/latest/?)
 <br>
 
-For web design and development, you can send inquiries to <strong>jeff@ndentwebservices.com</strong>.<br>
+For web design and development, you may send inquiries to <strong>jeff@ndentwebservices.com</strong>.<br>
 We are offering: <br>
 Web design and development<br>
 Systems Integration<br>
