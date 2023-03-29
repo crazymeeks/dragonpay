@@ -16,3 +16,13 @@
 
 
 Documentation is available [here](https://dragonpay.readthedocs.io/en/latest/?)
+<br>
+
+For web design and development, you can send inquiries to <strong>jeff@ndentwebservices.com</strong>.<br>
+We are offering: <br>
+Web design and development<br>
+Systems Integration<br>
+Ecommerce development<br>
+Chatbot development<br>
+
+For more info, visit: <a href="http://ndentwebservices.com">nDent Webservices</a>
